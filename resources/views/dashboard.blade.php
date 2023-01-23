@@ -1,7 +1,6 @@
 @extends('adminlte::page')
 
 @php
-    // dd($witel);
 @endphp
 
 @section('content_header')
@@ -57,7 +56,7 @@
                                         <option value="">All</option>
                                         @foreach ($yearList as $item)
                                             <option value="{{ $item }}"
-                                                @if ($year === $item) selected @endif>{{ $item }}
+                                                @if ($year == $item) selected @endif>{{ $item }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -98,7 +97,7 @@
                 <div class="col-lg-4 col-6">
                     <div class="small-box" style="background-color: #fd7e14;">
                         <div class="inner">
-                            <h3>{{ $totalSales != 0 ? number_format(($totalLoss / $totalSales) * 100) . '%' : 'N/A' }}
+                            <h3>{{ $totalSales != 0 ? number_format(($totalLoss / $totalSales) * 100, 2) . ' %' : 'N/A' }}
                             </h3>
 
                             <p>LOSS TO SALES</p>
@@ -112,7 +111,7 @@
                 <div class="col-lg-4 col-6">
                     <div class="small-box" style="background-color: #fd7e14;">
                         <div class="inner">
-                            <h3>{{ $totalLis != 0 ? number_format(($totalLoss / $totalLis) * 100) . '%' : 'N/A' }}</h3>
+                            <h3>{{ $totalLis != 0 ? number_format(($totalLoss / $totalLis) * 100, 2) . ' %' : 'N/A' }}</h3>
 
                             <p>LOST TO LIS</p>
                             <label style="font-style:italic;">(Mtd H-1)</label>
@@ -126,7 +125,7 @@
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-info">
                         <div class="inner">
-                            <h3>{{ number_format($totalLis) }}</h3>
+                            <h3>{{ is_null($totalLis) ? 0 : number_format($totalLis) }}</h3>
 
                             <p>TOTAL LIS</p>
                             <label style="font-style:italic;">(Mtd H-1)</label>
@@ -139,7 +138,7 @@
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-warning">
                         <div class="inner">
-                            <h3>{{ is_null($totalVha) ? 0 : $totalVha }}
+                            <h3>{{ is_null($totalVha) ? 0 : number_format($totalVha) }}
                             </h3>
 
                             <p>VH ALERT</p>
@@ -153,7 +152,7 @@
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-danger">
                         <div class="inner">
-                            <h3>{{ is_null($totalLoss) ? 0 : $totalLoss }}</h3>
+                            <h3>{{ is_null($totalLoss) ? 0 : number_format($totalLoss) }}</h3>
 
                             <p>TOTAL LOST</p>
                             <label style="font-style:italic;">(Mtd H-1)</label>

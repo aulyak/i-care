@@ -67,6 +67,8 @@ class DashboardController extends Controller
     });
     $distinct = $map->unique();
 
+    // dd($filteredSummary);S
+
     if ($request->all()) {
       $witel = $request->witel;
       $month = $request->month;
@@ -90,13 +92,13 @@ class DashboardController extends Controller
       } else if (!$witel && $month && $year) {
         $filteredSummary = $dataSummary->filter(function ($row) use ($filterMonthYear) {
           $monthYearRow = (string) $row['bulan'];
-          $yearRow = substr($monthYearRow, 3);
+          $yearRow = substr($monthYearRow, 0, 4);
           return $row['bulan'] == $filterMonthYear;
         });
 
         $filteredProfileLoss = $dataProfileLoss->filter(function ($row) use ($filterMonthYear) {
           $monthYearRow = (string) $row['bulan'];
-          $yearRow = substr($monthYearRow, 3);
+          $yearRow = substr($monthYearRow, 0, 4);
           return $row['bulan'] == $filterMonthYear;
         });
 
@@ -106,19 +108,19 @@ class DashboardController extends Controller
       } else if (!$witel && !$month && $year) {
         $filteredSummary = $dataSummary->filter(function ($row) use ($year) {
           $monthYearRow = (string) $row['bulan'];
-          $yearRow = substr($monthYearRow, 3);
+          $yearRow = substr($monthYearRow, 0, 4);
           return $yearRow == $year;
         });
 
         $filteredProfileLoss = $dataProfileLoss->filter(function ($row) use ($year) {
           $monthYearRow = (string) $row['bulan'];
-          $yearRow = substr($monthYearRow, 3);
+          $yearRow = substr($monthYearRow, 0, 4);
           return $yearRow == $year;
         });
 
         $filteredAlert = $dataAlert->filter(function ($row) use ($year) {
           $monthYearRow = (string) $row['bulan_alert'];
-          $yearRow = substr($monthYearRow, 3);
+          $yearRow = substr($monthYearRow, 0, 4);
           return $yearRow == $year;
         });
       } else if ($witel && $month && !$year) {
@@ -139,6 +141,36 @@ class DashboardController extends Controller
           $monthRow = substr($monthYearRow, -2);
           return $row['witel'] === $witel && $monthRow == $filterMonth;
         });
+      } else if ($witel && !$month && $year) {
+        $filteredSummary = $dataSummary->filter(function ($row) use ($witel, $year) {
+          $monthYearRow = (string) $row['bulan'];
+          $yearRow = substr($monthYearRow, 0, 4);
+          return $row['witel'] === $witel && $yearRow == $year;
+        });
+
+        $filteredProfileLoss = $dataProfileLoss->filter(function ($row) use ($witel, $year) {
+          $monthYearRow = (string) $row['bulan'];
+          $yearRow = substr($monthYearRow, 0, 4);
+          return $row['witel'] === $witel && $yearRow == $year;
+        });
+
+        $filteredAlert = $dataAlert->filter(function ($row) use ($witel, $year) {
+          $monthYearRow = (string) $row['bulan_alert'];
+          $yearRow = substr($monthYearRow, 0, 4);
+          return $row['witel'] === $witel && $yearRow == $year;
+        });
+      } else if ($witel && !$month && !$year) {
+        $filteredSummary = $dataSummary->filter(function ($row) use ($witel) {
+          return $row['witel'] === $witel;
+        });
+
+        $filteredProfileLoss = $dataProfileLoss->filter(function ($row) use ($witel) {
+          return $row['witel'] === $witel;
+        });
+
+        $filteredAlert = $dataAlert->filter(function ($row) use ($witel) {
+          return $row['witel'] === $witel;
+        });
       } else if (!$witel && $month && !$year) {
         $filteredSummary = $dataSummary->filter(function ($row) use ($filterMonth) {
           $monthYearRow = (string) $row['bulan'];
@@ -157,25 +189,29 @@ class DashboardController extends Controller
           $monthRow = substr($monthYearRow, -2);
           return $monthRow == $filterMonth;
         });
+      } else {
+        $filteredSummary = $dataSummary;
+        $filteredProfileLoss = $dataProfileLoss;
+        $filteredAlert = $dataAlert;
       }
-
-      $filteredDataAlertVh = $filteredAlert->filter(function ($row) {
-        return $row['alert'] === 'VERY HIGH ALERT';
-      });
-
-      $totalSales = $filteredSummary->reduce(function ($carry, $item) {
-        return $carry + $item['total_sales'];
-      });
-      $totalLis = $filteredSummary->reduce(function ($carry, $item) {
-        return $carry + $item['total_lis'];
-      });
-      $totalLoss = $filteredProfileLoss->reduce(function ($carry, $item) {
-        return $carry + $item['jumlah'];
-      });
-      $totalVha = $filteredDataAlertVh->reduce(function ($carry) {
-        return $carry + 1;
-      });
     }
+
+    $filteredDataAlertVh = $filteredAlert->filter(function ($row) {
+      return $row['alert'] === 'VERY HIGH ALERT';
+    });
+
+    $totalSales = $filteredSummary->reduce(function ($carry, $item) {
+      return $carry + $item['total_sales'];
+    });
+    $totalLis = $filteredSummary->reduce(function ($carry, $item) {
+      return $carry + $item['total_lis'];
+    });
+    $totalLoss = $filteredProfileLoss->reduce(function ($carry, $item) {
+      return $carry + $item['jumlah'];
+    });
+    $totalVha = $filteredDataAlertVh->reduce(function ($carry) {
+      return $carry + 1;
+    });
 
     return view(
       'dashboard',

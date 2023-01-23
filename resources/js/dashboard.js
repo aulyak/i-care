@@ -37,7 +37,6 @@ $(document).ready(async function() {
   const filteredProfileLoss = $('#summary').data('filtered-profile-loss');
   const filteredAlert = $('#summary').data('filtered-profile-loss');
   const dataTotal = $('#summary').data('total');
-  console.log({dataTotal});
 
   const filteredProporsiFlat = filteredProporsi ? Object.values(filteredProporsi) : '';
   const filteredProfileLossFlat = filteredProfileLoss ? Object.values(filteredProfileLoss) : '';
@@ -45,21 +44,27 @@ $(document).ready(async function() {
   const groupedSummary = groupByWitel(filteredProporsiFlat);
   const groupedLoss = groupByWitel(filteredProfileLossFlat);
   const groupedAlert = groupByWitel(filteredAlertFlat);
-  console.log({groupedSummary, groupedLoss});
   const sumTotalLis = groupedSummary.reduce((adder, item) => adder + item.total_lis, 0);
   const groupedPercentage = groupedSummary.map(item => ({...item, percentage: item.total_lis / sumTotalLis * 100}));
-  // console.log({sumTotalLis, groupedPercentage});
 
   const canvasSummary = document.getElementById('summary');
   const ctxSummary = canvasSummary.getContext('2d');
   const canvasProporsi = document.getElementById('proporsi');
   const ctxProporsi = canvasProporsi.getContext('2d');
 
-  console.log(Object.keys(dataTotal));
+  const labelsSummary = Object.keys(dataTotal);
+  const dataSummaryRaw = Object.values(dataTotal);
+
+  const dataSetSummary = [];
+  for (let i = 0; i < labelsSummary.length; i++) {
+    dataSetSummary.push({x: labelsSummary[i], y: dataSummaryRaw[i]});
+  }
+
   const dataSummary = {
-    labels: Object.keys(dataTotal),
+    // labels: Object.keys(dataTotal),
     datasets: [{
-      data: Object.values(dataTotal),
+      // data: Object.values(dataTotal),
+      data: dataSetSummary,
       backgroundColor: Object.keys(dataTotal).map(item => '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0'))
     }]
   };
@@ -73,10 +78,11 @@ $(document).ready(async function() {
     }]
   };
 
-  var areaChartData = {
+  const areaChartData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [
       {
+        label: 'Loss',
         backgroundColor: 'rgba(60,141,188,0.9)',
         borderColor: 'rgba(60,141,188,0.8)',
         pointRadius: false,
@@ -87,6 +93,7 @@ $(document).ready(async function() {
         data: [28, 48, 40, 19, 86, 27, 90]
       },
       {
+        label: 'Sales',
         backgroundColor: 'rgba(210, 214, 222, 1)',
         borderColor: 'rgba(210, 214, 222, 1)',
         pointRadius: false,
@@ -103,20 +110,8 @@ $(document).ready(async function() {
     maintainAspectRatio: false,
     responsive: true,
     legend: {
-      display: false
+      display: true
     },
-    scales: {
-      xAxes: [{
-        gridLines: {
-          display: false,
-        }
-      }],
-      yAxes: [{
-        gridLines: {
-          display: false,
-        }
-      }]
-    }
   };
 
   const lineChartCanvas = $('#tren').get(0).getContext('2d');
@@ -126,11 +121,11 @@ $(document).ready(async function() {
   lineChartData.datasets[1].fill = false;
   lineChartOptions.datasetFill = false;
 
-  // const lineChart = new Chart(lineChartCanvas, {
-  //   type: 'line',
-  //   data: lineChartData,
-  //   options: lineChartOptions
-  // });
+  const lineChart = new Chart(lineChartCanvas, {
+    type: 'line',
+    data: lineChartData,
+    options: lineChartOptions
+  });
 
   const summaryChart = new Chart(ctxSummary, {
     type: 'bar',

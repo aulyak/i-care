@@ -110,7 +110,7 @@ return [
     */
 
   'preloader' => [
-    'enabled' => true,
+    'enabled' => false,
     'img' => [
       // 'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
       'path' => 'image/icare_logo.png',
