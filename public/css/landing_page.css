@@ -1,0 +1,55 @@
+.navbar-home-menu {
+  color: black;
+}
+
+.main-page {
+  text-align: center;
+  background-color: #eee;
+}
+
+.main-page .card {
+  text-align: left;
+  background-color: #eee;
+  border: none;
+}
+
+.main-page .btn {
+  border-radius: 10rem;
+  background-color: #b13706;
+  outline: none;
+  /* color: white; */
+}
+
+.second-page {
+  background-color: #f28c64;
+}
+
+.second-page p {
+  font-size: smaller;
+}
+
+.second-page .card {
+  text-align: left;
+  /* background-color: #eee; */
+  border: none;
+  height: 90vh;
+}
+
+.second-page .card-footer {
+  background-color: white;
+  border: none;
+}
+
+.second-page .btn {
+  /* border-radius: 10rem; */
+  background-color: #b13706;
+  outline: none;
+  /* color: white; */
+}
+
+
+.banner-main-page img {
+  /* background-image: url("/asset/banner_picture.png"); */
+  /* background-color: black; */
+  width: 100%;
+}
