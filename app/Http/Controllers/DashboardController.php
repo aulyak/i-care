@@ -60,6 +60,7 @@ class DashboardController extends Controller
     $filteredSummary = $dataSummary;
     $filteredProfileLoss = $dataProfileLoss;
     $filteredAlert = $dataAlert;
+    $filteredDataAlertVh = null;
 
     $map = $dataSummary->map(function ($row) {
       return $row['witel'];

@@ -126,11 +126,11 @@ $(document).ready(async function() {
   lineChartData.datasets[1].fill = false;
   lineChartOptions.datasetFill = false;
 
-  const lineChart = new Chart(lineChartCanvas, {
-    type: 'line',
-    data: lineChartData,
-    options: lineChartOptions
-  });
+  // const lineChart = new Chart(lineChartCanvas, {
+  //   type: 'line',
+  //   data: lineChartData,
+  //   options: lineChartOptions
+  // });
 
   const summaryChart = new Chart(ctxSummary, {
     type: 'bar',
