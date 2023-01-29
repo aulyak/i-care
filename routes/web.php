@@ -19,18 +19,9 @@ Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
   Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
-});
-
-Route::middleware(['auth'])->group(function () {
-  Route::get('/alert_view_by_age', [App\Http\Controllers\AlertViewAgeController::class, 'index'])->name('alert_view_by_age');
-});
-
-Route::middleware(['auth'])->group(function () {
-  Route::get('/alert_view_by_witel', [App\Http\Controllers\AlertViewWitelController::class, 'index'])->name('alert_view_by_age');
-});
-
-Route::middleware(['auth'])->group(function () {
-  Route::get('/alert_view_update', [App\Http\Controllers\AlertViewUpdateController::class, 'index'])->name('alert_view_by_age');
+  Route::get('/alert_view_by_age', [App\Http\Controllers\AlertController::class, 'viewByAge'])->name('alert_view_by_age');
+  Route::get('/alert_view_by_witel', [App\Http\Controllers\AlertController::class, 'viewByWitel'])->name('alert_view_by_age');
+  Route::get('/alert_view_update', [App\Http\Controllers\AlertController::class, 'viewUpdate'])->name('alert_view_by_age');
 });
 
 Route::get('/', function () {
