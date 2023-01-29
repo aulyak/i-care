@@ -13,6 +13,9 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
   .js('resources/js/dashboard.js', 'public/js')
+  .js('resources/js/view_age.js', 'public/js')
+  .js('resources/js/view_witel.js', 'public/js')
+  .js('resources/js/view_update.js', 'public/js')
   .sass('resources/sass/app.scss', 'public/css')
   .sass('resources/sass/bootstrap.scss', 'public/css')
   .postCss('resources/css/landing_page.css', 'public/css')

@@ -339,17 +339,17 @@ return [
       'submenu' => [
         [
           'text' => 'Alert View by Age',
-          'url'  => '#',
+          'url'  => 'alert_view_by_age',
           'icon'    => 'fa fa-arrow-circle-right nav-icon',
         ],
         [
           'text' => 'Alert View by Witel',
-          'url'  => '#',
+          'url'  => 'alert_view_by_witel',
           'icon'    => 'fa fa-arrow-circle-right nav-icon',
         ],
         [
           'text' => 'Alert Update',
-          'url'  => '#',
+          'url'  => 'alert_view_update',
           'icon'    => 'fa fa-arrow-circle-right nav-icon',
         ],
       ]
@@ -466,7 +466,7 @@ return [
         [
           'type' => 'js',
           'asset' => false,
-          'location' => '//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js',
+          'location' => '//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js',
         ],
         [
           'type' => 'js',
@@ -476,7 +476,7 @@ return [
         [
           'type' => 'css',
           'asset' => false,
-          'location' => '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css',
+          'location' => '//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css',
         ],
       ],
     ],

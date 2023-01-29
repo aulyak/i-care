@@ -1,6 +1,9 @@
 {
     "/js/app.js": "/js/app.js",
     "/js/dashboard.js": "/js/dashboard.js",
+    "/js/view_age.js": "/js/view_age.js",
+    "/js/view_witel.js": "/js/view_witel.js",
+    "/js/view_update.js": "/js/view_update.js",
     "/css/app.css": "/css/app.css",
     "/css/landing_page.css": "/css/landing_page.css",
     "/css/bootstrap.css": "/css/bootstrap.css"
