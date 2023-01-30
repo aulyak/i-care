@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Imports\dataImport;
+use App\Services\CsvService;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Collection;
 
@@ -16,7 +17,7 @@ class DashboardController extends Controller
    *
    * @return \Illuminate\Contracts\Support\Renderable
    */
-  public function index(Request $request)
+  public function index(Request $request, CsvService $csvService)
   {
 
     $monthList = [
@@ -45,29 +46,26 @@ class DashboardController extends Controller
     $witel = null;
     $month = null;
     $year = null;
-    $distinct = null;
+    $distinctWitel = null;
     $totalSales = 0;
     $totalLis = 0;
     $totalLoss = 0;
     $totalVha = 0;
     $filteredProporsi = null;
-    $summary = Excel::toArray(new dataImport, 'storage/Summary.csv');
-    $dataSummary = collect($summary[0]);
-    $profileLoss = Excel::toArray(new dataImport, 'storage/Profile Loss.csv');
-    $dataProfileLoss = collect($profileLoss[0]);
-    $alert = Excel::toArray(new dataImport, 'storage/Alert.csv');
-    $dataAlert = collect($alert[0]);
+    $dataSummary = $csvService->readCsv('storage/Summary.csv');
+    $dataProfileLoss = $csvService->readCsv('storage/Profile Loss.csv');
+    $dataAlert = $csvService->readCsv('storage/Alert.csv');
     $filteredSummary = $dataSummary;
     $filteredProfileLoss = $dataProfileLoss;
     $filteredAlert = $dataAlert;
     $filteredDataAlertVh = null;
 
-    $map = $dataSummary->map(function ($row) {
-      return $row['witel'];
-    });
-    $distinct = $map->unique();
+    // $mappedWitel = $dataSummary->map(function ($row) {
+    //   return $row['witel'];
+    // });
+    // $distinctWitel = $mappedWitel->unique();
 
-    // dd($filteredSummary);S
+    $distinctWitel = $csvService->getUniqueByRowName($dataSummary, 'witel');
 
     if ($request->all()) {
       $witel = $request->witel;
@@ -219,7 +217,7 @@ class DashboardController extends Controller
         'witel',
         'month',
         'year',
-        'distinct',
+        'distinctWitel',
         'monthList',
         'totalSales',
         'totalLis',

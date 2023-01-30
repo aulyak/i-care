@@ -28,7 +28,7 @@
                                     <label>WITEL</label>
                                     <select name="witel" class="form-control">
                                         <option value="">All</option>
-                                        @foreach ($distinct as $item)
+                                        @foreach ($distinctWitel as $item)
                                             <option value="{{ $item }}"
                                                 @if ($witel === $item) selected @endif>{{ $item }}
                                             </option>

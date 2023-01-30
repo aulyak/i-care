@@ -61,9 +61,7 @@ $(document).ready(async function() {
   }
 
   const dataSummary = {
-    // labels: Object.keys(dataTotal),
     datasets: [{
-      // data: Object.values(dataTotal),
       data: dataSetSummary,
       backgroundColor: Object.keys(dataTotal).map(item => '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0'))
     }]
