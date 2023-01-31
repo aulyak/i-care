@@ -2,16 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\ProcessData;
 use Illuminate\Http\Request;
-use App\Imports\dataImport;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Collection;
 use App\Services\CsvService;
 use Carbon\Carbon;
 
 class AlertController extends Controller
 {
-  public function viewByAge(Request $request, CsvService $csvService)
+  private $alertData, $distinctWitel, $distinctSto, $distinctBulanAlert, $distinctStatus, $distinctKategoriHvc, $distinctHvcWaGroup;
+
+  public function __construct(CsvService $csvService)
+  {
+    $this->alertData = $csvService->readCsv('storage/Alert.csv');
+    $this->distinctWitel = $csvService->getUniqueByRowName($this->alertData, 'witel');
+    $this->distinctSto = $csvService->getUniqueByRowName($this->alertData, 'sto');
+    $this->distinctBulanAlert = $csvService->getUniqueByRowName($this->alertData, 'bulan_alert');
+    $this->distinctStatus = $csvService->getUniqueByRowName($this->alertData, 'status');
+    $this->distinctKategoriHvc = $csvService->getUniqueByRowName($this->alertData, 'atribut');
+    $this->distinctHvcWaGroup = $csvService->getUniqueByRowName($this->alertData, 'hvc_wa_group');
+  }
+
+  public function viewByAge(Request $request, ProcessData $processData)
   {
     $witel = $request->witel;
     $sto = $request->sto;
@@ -20,32 +31,7 @@ class AlertController extends Controller
     $kategoriHvc = $request->kategoriHvc;
     $hvcWaGroup = $request->hvcWaGroup;
 
-    $arrRequestMapCsv = [
-      'witel' => $witel,
-      'sto' => $sto,
-      'bulan_alert' => $bulanAlert,
-      'status' => $status,
-      'atribut' => $kategoriHvc,
-      'hvc_wa_group' => $hvcWaGroup,
-    ];
-
-    $alertData = $csvService->readCsv('storage/Alert.csv');
-
-    $distinctWitel = $csvService->getUniqueByRowName($alertData, 'witel');
-    $distinctSto = $csvService->getUniqueByRowName($alertData, 'sto');
-    $distinctBulanAlert = $csvService->getUniqueByRowName($alertData, 'bulan_alert');
-    $distinctStatus = $csvService->getUniqueByRowName($alertData, 'status');
-    $distinctKategoriHvc = $csvService->getUniqueByRowName($alertData, 'atribut');
-    $distinctHvcWaGroup = $csvService->getUniqueByRowName($alertData, 'hvc_wa_group');
-
-    $filteredData = $alertData;
-    foreach ($arrRequestMapCsv as $key => $value) {
-      if ($value) {
-        $filteredData = $filteredData->filter(function ($row) use ($key, $value) {
-          return $row[$key] == $value;
-        });
-      }
-    }
+    $filteredData = $processData->filter($witel, $sto, $bulanAlert, $status, $kategoriHvc, $hvcWaGroup, $this->alertData);
 
     $arrThColumn = null;
     $newestBulanAlert = Carbon::now()->format('Ym');
@@ -68,32 +54,89 @@ class AlertController extends Controller
     sort($arrThColumn);
 
 
-    return view('alert.view_by_age', compact(
-      'arrThColumn',
-      'filteredData',
-      'distinctWitel',
-      'distinctSto',
-      'distinctBulanAlert',
-      'distinctStatus',
-      'distinctKategoriHvc',
-      'distinctHvcWaGroup',
-      'witel',
-      'sto',
-      'distinctSto',
-      'bulanAlert',
-      'status',
-      'kategoriHvc',
-      'hvcWaGroup',
+    return view('alert.view_by_age', array_merge(
+      compact(
+        'filteredData',
+        'arrThColumn',
+        'witel',
+        'sto',
+        'bulanAlert',
+        'status',
+        'kategoriHvc',
+        'hvcWaGroup',
+      ),
+      [
+        'distinctWitel' => $this->distinctWitel,
+        'distinctSto' => $this->distinctSto,
+        'distinctBulanAlert' => $this->distinctBulanAlert,
+        'distinctStatus' => $this->distinctStatus,
+        'distinctKategoriHvc' => $this->distinctKategoriHvc,
+        'distinctHvcWaGroup' => $this->distinctHvcWaGroup,
+      ]
     ));
   }
 
-  public function viewByWitel(Request $request)
+  public function viewByWitel(Request $request, ProcessData $processData)
   {
-    return view('alert.view_by_witel');
+    $witel = $request->witel;
+    $sto = $request->sto;
+    $bulanAlert = $request->bulanAlert;
+    $status = $request->status;
+    $kategoriHvc = $request->kategoriHvc;
+    $hvcWaGroup = $request->hvcWaGroup;
+
+    $filteredData = $processData->filter($witel, $sto, $bulanAlert, $status, $kategoriHvc, $hvcWaGroup, $this->alertData);
+
+    return view('alert.view_by_witel', array_merge(
+      compact(
+        'filteredData',
+        'witel',
+        'sto',
+        'bulanAlert',
+        'status',
+        'kategoriHvc',
+        'hvcWaGroup',
+      ),
+      [
+        'distinctWitel' => $this->distinctWitel,
+        'distinctSto' => $this->distinctSto,
+        'distinctBulanAlert' => $this->distinctBulanAlert,
+        'distinctStatus' => $this->distinctStatus,
+        'distinctKategoriHvc' => $this->distinctKategoriHvc,
+        'distinctHvcWaGroup' => $this->distinctHvcWaGroup,
+      ]
+    ));
   }
 
-  public function viewUpdate(Request $request)
+  public function viewUpdate(Request $request, ProcessData $processData)
   {
-    return view('alert.view_update');
+    $witel = $request->witel;
+    $sto = $request->sto;
+    $bulanAlert = $request->bulanAlert;
+    $status = $request->status;
+    $kategoriHvc = $request->kategoriHvc;
+    $hvcWaGroup = $request->hvcWaGroup;
+
+    $filteredData = $processData->filter($witel, $sto, $bulanAlert, $status, $kategoriHvc, $hvcWaGroup, $this->alertData);
+
+    return view('alert.view_update', array_merge(
+      compact(
+        'filteredData',
+        'witel',
+        'sto',
+        'bulanAlert',
+        'status',
+        'kategoriHvc',
+        'hvcWaGroup',
+      ),
+      [
+        'distinctWitel' => $this->distinctWitel,
+        'distinctSto' => $this->distinctSto,
+        'distinctBulanAlert' => $this->distinctBulanAlert,
+        'distinctStatus' => $this->distinctStatus,
+        'distinctKategoriHvc' => $this->distinctKategoriHvc,
+        'distinctHvcWaGroup' => $this->distinctHvcWaGroup,
+      ]
+    ));
   }
 }

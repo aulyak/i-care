@@ -9,104 +9,105 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                    </div><!-- /.col -->
+                    </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Alert Update</a></li>
-                            <!-- <li class="breadcrumb-item active">Dashboard v1</li> -->
                         </ol>
-                    </div><!-- /.col -->
-                </div><!-- /.row -->
-            </div><!-- /.container-fluid -->
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <form>
+                    <form id="filter-form" action="{{ route('alert_view_update') }}" method="GET"
+                        data-filtered-data="{{ json_encode($filteredData) }}">
                         <div class="row">
                             <div class="col-sm-6 col-md-2">
-                                <!-- select -->
                                 <div class="form-group">
-                                    <label>Witel</label>
-                                    <select class="form-control">
-                                        <option>(ALL)</option>
-                                        <option>option 2</option>
-                                        <option>option 3</option>
-                                        <option>option 4</option>
-                                        <option>option 5</option>
+                                    <label>WITEL</label>
+                                    <select class="form-control" name="witel">
+                                        <option value="">ALL</option>
+                                        @foreach ($distinctWitel as $item)
+                                            <option value="{{ $item }}"
+                                                @if ($witel === $item) selected @endif>{{ $item }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-2">
                                 <div class="form-group">
                                     <label>STO</label>
-                                    <select class="form-control">
-                                        <option>(ALL)</option>
-                                        <option>option 2</option>
-                                        <option>option 3</option>
-                                        <option>option 4</option>
-                                        <option>option 5</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-2">
-                                <!-- select -->
-                                <div class="form-group">
-                                    <label>Alert</label>
-                                    <select class="form-control">
-                                        <option>(ALL)</option>
-                                        <option>option 2</option>
-                                        <option>option 3</option>
-                                        <option>option 4</option>
-                                        <option>option 5</option>
+                                    <select class="form-control" name="sto">
+                                        <option value="">ALL</option>
+                                        @foreach ($distinctSto as $item)
+                                            <option value="{{ $item }}"
+                                                @if ($sto === $item) selected @endif>{{ $item }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-2">
                                 <div class="form-group">
-                                    <label>Attribute</label>
-                                    <select class="form-control">
-                                        <option>(ALL)</option>
-                                        <option>option 2</option>
-                                        <option>option 3</option>
-                                        <option>option 4</option>
-                                        <option>option 5</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-2">
-                                <!-- select -->
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <select class="form-control">
-                                        <option>(ALL)</option>
-                                        <option>option 2</option>
-                                        <option>option 3</option>
-                                        <option>option 4</option>
-                                        <option>option 5</option>
+                                    <label>BULAN ALERT</label>
+                                    <select class="form-control" name="bulanAlert">
+                                        <option value="">ALL</option>
+                                        @foreach ($distinctBulanAlert as $item)
+                                            <option value="{{ $item }}"
+                                                @if ($bulanAlert == $item) selected @endif>{{ $item }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-2">
                                 <div class="form-group">
-                                    <label>Bulan Alert</label>
-                                    <select class="form-control">
-                                        <option>(ALL)</option>
-                                        <option>option 2</option>
-                                        <option>option 3</option>
-                                        <option>option 4</option>
-                                        <option>option 5</option>
+                                    <label>STATUS</label>
+                                    <select class="form-control" name="status">
+                                        <option value="">ALL</option>
+                                        @foreach ($distinctStatus as $item)
+                                            <option value="{{ $item }}"
+                                                @if ($status === $item) selected @endif>{{ $item }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-2">
+                                <div class="form-group">
+                                    <label>KATEGORI HVC</label>
+                                    <select class="form-control" name="kategoriHvc">
+                                        <option value="">ALL</option>
+                                        @foreach ($distinctKategoriHvc as $item)
+                                            <option value="{{ $item }}"
+                                                @if ($kategoriHvc === $item) selected @endif>{{ $item }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-2">
+                                <div class="form-group">
+                                    <label>HVC WA GROUP</label>
+                                    <select class="form-control" name="hvcWaGroup">
+                                        <option value="">ALL</option>
+                                        @foreach ($distinctHvcWaGroup as $item)
+                                            <option value="{{ $item }}"
+                                                @if ($hvcWaGroup === $item) selected @endif>{{ $item }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <button type="button" class="form-control btn btn-primary" style="margin: .4rem;">Ok</button>
+                            <button type="submit" class="form-control btn btn-primary" style="margin: .4rem;">Go</button>
                         </div>
-                        <!-- input states -->
                     </form>
                 </div>
-                <!-- /.card-header -->
             </div>
         </div>
     </div>
@@ -120,15 +121,9 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <!-- /.card -->
-
                     <div class="card">
-                        <!-- <div class="card-header">
-                                      <h3 class="card-title">DataTable with default features</h3>
-                                    </div> -->
-                        <!-- /.card-header -->
                         <div class="card-body">
-                            <table id="example1" class="table table-bordered table-striped">
+                            <table id="table-update" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
                                         <th>NOTEL</th>
@@ -139,12 +134,14 @@
                                         <th>ATRIBUT</th>
                                         <th>ALERT</th>
                                         <th>SCORE</th>
-                                        <!-- <th>STATUS</th> -->
-                                        <th></th>
+                                        <th>BULAN ALERT</th>
+                                        <th>STATUS</th>
+                                        <th>DESKRIPSI</th>
+                                        <th>ACTION</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    {{-- <tr>
                                         <td>11173510865</td>
                                         <td>JAKPUS</td>
                                         <td>GBI</td>
@@ -156,54 +153,14 @@
                                         <!-- <td>OPEN</td> -->
                                         <td><button type="button" class="form-control btn"><i class="nav-icon fas fa-edit"
                                                     data-toggle="modal" data-target="#modal-lg"></i></button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>121101201842</td>
-                                        <td>JAKTIM</td>
-                                        <td>JTN</td>
-                                        <td>2016-02-20</td>
-                                        <td>67</td>
-                                        <td>VERY BAD LATENCY</td>
-                                        <td>VERY HIGH ALERT</td>
-                                        <td>20</td>
-                                        <!-- <td>OPEN</td> -->
-                                        <td><button type="button" class="form-control btn"><i class="nav-icon fas fa-edit"
-                                                    data-toggle="modal" data-target="#modal-lg"></i></button></td>
-                                    </tr>
-                                    <tr>
-                                        <td>12110120819</td>
-                                        <td>JAKTIM</td>
-                                        <td>JTN</td>
-                                        <td>2016-01-31</td>
-                                        <td>68</td>
-                                        <td>VERY BAD LATENCY</td>
-                                        <td>VERY HIGH ALERT</td>
-                                        <td>20</td>
-                                        <!-- <td>OPEN</td> -->
-                                        <td><button type="button" class="form-control btn"><i class="nav-icon fas fa-edit"
-                                                    data-toggle="modal" data-target="#modal-lg"></i></button></td>
-                                    </tr>
+                                    </tr> --}}
                                 </tbody>
-                                <!-- <tfoot>
-                                        <tr>
-                                          <th>Rendering engine</th>
-                                          <th>Browser</th>
-                                          <th>Platform(s)</th>
-                                          <th>Engine version</th>
-                                          <th>CSS grade</th>
-                                        </tr>
-                                        </tfoot> -->
                             </table>
                         </div>
-                        <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
                 </div>
-                <!-- /.col -->
             </div>
-            <!-- /.row -->
         </div>
-        <!-- /.container-fluid -->
 
         <div class="modal fade" id="modal-lg">
             <div class="modal-dialog modal-lg">
@@ -276,31 +233,31 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- /.card-body -->
                         </form>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
                         <button type="button" class="btn btn-primary">UPDATE</button>
                     </div>
                 </div>
-                <!-- /.modal-content -->
             </div>
-            <!-- /.modal-dialog -->
         </div>
     </section>
 
 @stop
 
-@section('js')
-    <script src="js/app.js"></script>
-    <script src="js/view_witel.js"></script>
+@section('css')
+
     <link rel="stylesheet" type="text/css"
         href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.13.1/b-2.3.3/b-colvis-2.3.3/b-html5-2.3.3/b-print-2.3.3/r-2.4.0/sc-2.0.7/datatables.min.css" />
+@stop
+
+@section('js')
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript"
         src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.13.1/b-2.3.3/b-colvis-2.3.3/b-html5-2.3.3/b-print-2.3.3/r-2.4.0/sc-2.0.7/datatables.min.js">
     </script>
+    <script src="js/app.js"></script>
+    <script src="js/view_update.js"></script>
 @stop

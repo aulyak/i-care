@@ -46,7 +46,14 @@ $(document).ready(function() {
 
   const filteredValues = Object.values(filteredData);
   const groupedData = groupScores(filteredValues);
-  const bulanAlertArrHeader = bulanAlertList.map(item => ({data: item}));
+  const bulanAlertArrHeader = bulanAlertList.map(item => ({
+    data: item,
+    render: function(data, type, row) {
+      if (!data) return '';
+
+      return data;
+    },
+  }));
 
   const data = groupedData.map((item) => {
     const excludingBulanAlert = bulanAlertList.filter(row => row !== item.bulan_alert);
@@ -68,10 +75,31 @@ $(document).ready(function() {
   ];
 
   $("#table-view-by-age").DataTable({
+    paging: false,
     dom: "Bfrtip",
     data: pivotData,
     columns,
     scrollX: true,
-    buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
+    createdRow: function(row, data, dataIndex, cells) {
+      console.log({row, data, dataIndex});
+      if (data.alert === 'BASIC ALERT' || data.alert === 'LEVERAGING') $(row).css({'background-color': '#69AC65'});
+      if (data.alert === 'HIGH ALERT') $(row).css({'background-color': '#F4D165'});
+      if (data.alert === 'VERY HIGH ALERT') $(row).css({'background-color': '#BE2A3E', 'color': 'white'});
+      if (data.alert === 'CHURN RETENTION') $(row).css({'background-color': '#DB5346', 'color': 'white'});
+
+      $(cells).each(function(idx, cell) {
+        if ([0, 1].includes(idx)) $(cell).css({'background-color': 'white', 'color': 'black'});
+      });
+    },
+    columnDefs: [{
+      targets: '_all',
+      createdCell: function(td, cellData, rowData, row, col) {
+        console.log({cellData});
+        if (cellData === 0) {
+          $(td).css('background-color', 'white');
+        }
+      }
+    }],
   });
 });
