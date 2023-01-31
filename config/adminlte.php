@@ -360,12 +360,12 @@ return [
       'submenu' => [
         [
           'text' => 'QoS by Sales Month',
-          'url'  => '#',
+          'url'  => 'qos_by_sales',
           'icon'    => 'fa fa-arrow-circle-right nav-icon',
         ],
         [
           'text' => 'QoS by Witel',
-          'url'  => '#',
+          'url'  => 'qos_by_witel',
           'icon'    => 'fa fa-arrow-circle-right nav-icon',
         ],
       ]
@@ -376,22 +376,22 @@ return [
       'submenu' => [
         [
           'text' => 'Leveraging',
-          'url'  => '#',
+          'url'  => 'leveraging',
           'icon'    => 'fa fa-arrow-circle-right nav-icon',
         ],
         [
           'text' => 'Retention',
-          'url'  => '#',
+          'url'  => 'retention',
           'icon'    => 'fa fa-arrow-circle-right nav-icon',
         ],
         [
           'text' => 'List & Kwadran',
-          'url'  => '#',
+          'url'  => 'list_kwadran',
           'icon'    => 'fa fa-arrow-circle-right nav-icon',
         ],
         [
           'text' => 'Churn to Sales',
-          'url'  => '#',
+          'url'  => 'churn_to_sales',
           'icon'    => 'fa fa-arrow-circle-right nav-icon',
         ],
       ]
