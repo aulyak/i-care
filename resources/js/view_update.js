@@ -55,7 +55,9 @@ $(document).ready(function() {
       {data: 'bulan_alert'},
       {data: 'status'},
       {data: 'deskripsi'},
-      {data: 'action'}
+      {
+        data: 'action', render: (data, type, row) => `<button type="button" class="form-control btn"><i class="nav-icon fas fa-edit"
+      data-toggle="modal" data-target="#modal-lg"></i></button>`}
     ]
     // lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, All] ],
     // pageLength: 50
