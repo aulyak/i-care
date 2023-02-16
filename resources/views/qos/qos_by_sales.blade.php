@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @php
-    // dd($arrThColumn);
+  
 @endphp
 
 @section('content_header')
@@ -136,42 +136,18 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                              <td>202002</td>
-                              <td style="background-color: green;">100.00%</td>
-                              <td style="background-color: green;">99.24%</td>
-                              <td style="background-color: yellow;">77.84%</td>
-                              <td style="background-color: orange;">75.12%</td>
-                              <td style="background-color: orange;">73.19%</td>
-                              <td style="background-color: orange;">65.52%</td>
-                              <td style="background-color: orange;">63.79%</td>
-                              <td style="background-color: orange;">62.67%</td>
-                              <td style="background-color: orangered;">58.21%</td>
-                            </tr>
-                            <tr>
-                              <td>202003</td>
-                              <td style="background-color: green;">100.00%</td>
-                              <td style="background-color: green;">99.48%</td>
-                              <td style="background-color: yellow;">82.35%</td>
-                              <td style="background-color: yellow;">80.60%</td>
-                              <td style="background-color: orange;">76.73%</td>
-                              <td style="background-color: orange;">70.62%</td>
-                              <td style="background-color: orange;">68.71%</td>
-                              <td style="background-color: orange;">67.45%</td>
-                              <td style="background-color: orangered;">58.21%</td>
-                            </tr>
-                            <tr>
-                              <td>202110</td>
-                              <td style="background-color: red;">100.00%</td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                              <td></td>
-                            </tr>
+                              @foreach ($result as $res)    
+                              <tr>
+                                <td>{{ ($res['BULAN_SALES'] ?? '-') }}</td>
+                                @foreach ($agingQuery as $aq)
+                                  @if ($aq < count($res['AGING_PERCENTAGE']))
+                                    <td style="background-color: green;">{{ (round($res['AGING_PERCENTAGE'][$aq],2)*100 . '%' ?? '') }}</td>
+                                    @else
+                                    <td style="background-color: grey;"></td>
+                                  @endif
+                                @endforeach
+                              </tr>
+                              @endforeach
                             </tbody>
                             <!-- <tfoot>
                             <tr>
