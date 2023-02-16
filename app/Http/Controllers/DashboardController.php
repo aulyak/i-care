@@ -3,25 +3,35 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Imports\dataImport;
-use App\Services\CsvService;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Collection;
 use App\Models\Summary;
+use App\Models\Alert;
 use App\Models\Witel;
+use App\Models\ProfileLoss;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
   //
+  private $QUERY_LIMIT = 10000;
 
   /**
    * Show the application dashboard.
    *
    * @return \Illuminate\Contracts\Support\Renderable
    */
-  public function index(Request $request, CsvService $csvService)
+  public function index(Request $request)
   {
-    $data = Summary::get();
+    // dump('hai');
+    // $data = Summary::get();
+    $currentDate = Carbon::now();
+    $currentYear = $currentDate->year;
+    $currentMonth = str_pad($currentDate->month, 2, '0', STR_PAD_LEFT);
+
+    $oldestYearMonth = Summary::orderBy('BULAN', 'ASC')->limit(1)->first(['BULAN'])->BULAN;
+    // dump($oldestYearMonth);
+    $oldestYear = (int) substr($oldestYearMonth, 0, 4);
 
     $monthList = [
       'Januari',
@@ -38,13 +48,11 @@ class DashboardController extends Controller
       'Desember',
     ];
 
-    $yearList = [
-      2019,
-      2020,
-      2021,
-      2022,
-      2023
-    ];
+    $startYear = $oldestYear;
+    while ($startYear != $currentYear + 1) {
+      $yearList[] = $startYear;
+      $startYear++;
+    }
 
     $witel = null;
     $month = null;
@@ -55,23 +63,27 @@ class DashboardController extends Controller
     $totalLoss = 0;
     $totalVha = 0;
     $filteredProporsi = null;
-    $modelCollect = collect($data);
-    // $dataSummary = $csvService->readCsv('storage/Summary.csv');
-    $dataSummary = $modelCollect;
-
-    $dataProfileLoss = $csvService->readCsv('storage/Profile Loss.csv');
-    $dataAlert = $csvService->readCsv('storage/Alert.csv');
-    $filteredSummary = $dataSummary;
-    $filteredProfileLoss = $dataProfileLoss;
-    $filteredAlert = $dataAlert;
     $filteredDataAlertVh = null;
+    $filteredAlert = null;
+    // $modelCollect = collect($data);
+    // $dataSummary = $csvService->readCsv('storage/Summary.csv');
+    // $dataSummary = $modelCollect;
+
+    // $dataProfileLoss = $csvService->readCsv('storage/Profile Loss.csv');
+    // $dataAlert = $csvService->readCsv('storage/Alert.csv');
+    // $filteredSummary = $dataSummary;
+    // $filteredProfileLoss = $dataProfileLoss;
+    // $filteredAlert = $dataAlert;
 
     // $mappedWitel = $dataSummary->map(function ($row) {
     //   return $row['witel'];
     // });
     // $distinctWitel = $mappedWitel->unique();
-    $distinctWitel = Witel::select('WITEL')->groupBy('WITEL')->get()->pluck('WITEL');
+    $distinctWitel = Witel::select('WITEL')->groupBy('WITEL')->cursor()->pluck('WITEL');
+    // dump(Witel::select('WITEL')->groupBy('WITEL')->toSql());
+    // dump($distinctWitel);
     // $distinctWitel = $csvService->getUniqueByRowName($dataSummary, 'WITEL');
+
 
     if ($request->all()) {
       $witel = $request->witel;
@@ -80,17 +92,39 @@ class DashboardController extends Controller
       $monthIndex = array_search($month, $monthList) + 1;
       $filterMonth = str_pad($monthIndex, 2, '0', STR_PAD_LEFT);
       $filterMonthYear = $year . $filterMonth;
+      $filterYear = $year;
+
+      // dump($request->all());
 
       $filteredSummary = Summary::when($witel, function ($query) use ($witel) {
         return $query->where('WITEL', $witel);
-      })
-        ->when($month, function ($query) use ($witel) {
-          return $query->where('WITEL', $witel);
-        })
-        ->get();
+      })->when($year && $month, function ($query) use ($filterMonthYear) {
+        return $query->where('BULAN', $filterMonthYear);
+      })->when($month && !$year, function ($query) use ($filterMonth) {
+        return $query->where(DB::raw('substr(BULAN, 5, 2)'), '=', $filterMonth);
+      })->when($year && !$month, function ($query) use ($filterYear) {
+        return $query->where(DB::raw('substr(BULAN, 1, 4)'), '=', $filterYear);
+      });
 
-      $filteredSummary->dd();
+      $filteredAlert = Alert::when($witel, function ($query) use ($witel) {
+        return $query->where('WITEL', $witel);
+      })->when($year && $month, function ($query) use ($filterMonthYear) {
+        return $query->where('BULAN_ALERT', $filterMonthYear);
+      })->when($month && !$year, function ($query) use ($filterMonth) {
+        return $query->where(DB::raw('substr(BULAN_ALERT, 5, 2)'), '=', $filterMonth);
+      })->when($year && !$month, function ($query) use ($filterYear) {
+        return $query->where(DB::raw('substr(BULAN_ALERT, 1, 4)'), '=', $filterYear);
+      });
 
+      $filteredProfileLoss = ProfileLoss::when($witel, function ($query) use ($witel) {
+        return $query->where('WITEL', $witel);
+      })->when($year && $month, function ($query) use ($filterMonthYear) {
+        return $query->where('BULAN', $filterMonthYear);
+      })->when($month && !$year, function ($query) use ($filterMonth) {
+        return $query->where(DB::raw('substr(BULAN, 5, 2)'), '=', $filterMonth);
+      })->when($year && !$month, function ($query) use ($filterYear) {
+        return $query->where(DB::raw('substr(BULAN, 1, 4)'), '=', $filterYear);
+      });
 
       /* 
       if ($witel && $month && $year) {
@@ -209,25 +243,65 @@ class DashboardController extends Controller
         $filteredSummary = $dataSummary;
         $filteredProfileLoss = $dataProfileLoss;
         $filteredAlert = $dataAlert;
-      } */
+      } 
+      */
+    } else {
+      $filteredSummary = Summary::where(DB::raw('substr(BULAN, 1, 4)'), '=', $currentYear);
+      $filteredAlert = Alert::where(DB::raw('substr(BULAN_ALERT, 1, 4)'), '=', $currentYear);
+      $filteredProfileLoss = ProfileLoss::where(DB::raw('substr(BULAN, 1, 4)'), '=', $currentYear);
     }
 
-    $filteredDataAlertVh = $filteredAlert->filter(function ($row) {
-      return $row['alert'] === 'VERY HIGH ALERT';
-    });
+    // limit testing
+    $filteredSummary = $filteredSummary->limit($this->QUERY_LIMIT);
+    $filteredProfileLoss = $filteredProfileLoss->limit($this->QUERY_LIMIT);
+    $filteredAlert = $filteredAlert->limit($this->QUERY_LIMIT);
 
-    $totalSales = $filteredSummary->reduce(function ($carry, $item) {
-      return $carry + $item['total_sales'];
-    });
-    $totalLis = $filteredSummary->reduce(function ($carry, $item) {
-      return $carry + $item['total_lis'];
-    });
-    $totalLoss = $filteredProfileLoss->reduce(function ($carry, $item) {
-      return $carry + $item['jumlah'];
-    });
-    $totalVha = $filteredDataAlertVh->reduce(function ($carry) {
-      return $carry + 1;
-    });
+    // dump(
+    //   $filteredSummary->get(),
+    //   $filteredProfileLoss->get()
+    // );
+
+    $filteredAlert = $filteredAlert->where('ALERT', 'VERY HIGH ALERT');
+    $totalSales = $filteredSummary->sum('TOTAL_SALES');
+    $totalLis = $filteredSummary->sum('TOTAL_LIS');
+    $totalLoss = $filteredProfileLoss->sum('JUMLAH');
+
+    // dump($filteredSummary->toSql());
+    // dump($filteredAlert->toSql());
+    // dump($filteredProfileLoss->toSql());
+    // dd();
+
+    // dd(
+    //   $totalSales,
+    //   $totalLis,
+    //   $totalLoss,
+    // );
+
+    $filteredSummary = $filteredSummary->cursor();
+    $filteredProfileLoss = $filteredProfileLoss->cursor();
+
+
+    // slowing query alert
+    $filteredDataAlertVh = $filteredAlert->cursor();
+    $totalVha = $filteredAlert->count();
+    // dump(collect($filteredSummary), collect($filteredProfileLoss), collect($filteredDataAlertVh));
+
+    // $filteredDataAlertVh = $filteredAlert->filter(function ($row) {
+    //   return $row['alert'] === 'VERY HIGH ALERT';
+    // });
+
+    // $totalSales = $filteredSummary->reduce(function ($carry, $item) {
+    //   return $carry + $item['total_sales'];
+    // });
+    // $totalLis = $filteredSummary->reduce(function ($carry, $item) {
+    //   return $carry + $item['total_lis'];
+    // });
+    // $totalLoss = $filteredProfileLoss->reduce(function ($carry, $item) {
+    //   return $carry + $item['jumlah'];
+    // });
+    // $totalVha = $filteredDataAlertVh->reduce(function ($carry) {
+    //   return $carry + 1;
+    // });
 
     return view(
       'dashboard',

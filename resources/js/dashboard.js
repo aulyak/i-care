@@ -2,13 +2,13 @@ const dt = luxon.DateTime;
 
 function groupByWitel(arr) {
   const result = [...arr.reduce((r, o) => {
-    const key = o.witel;
+    const key = o.WITEL;
 
     const item = r.get(key) || Object.assign({}, o, {
-      totalLis: 0,
+      TOTAL_LIS: 0,
     });
 
-    item.totalLis += parseFloat(o.total_lis);
+    item.TOTAL_LIS += parseFloat(o.TOTAL_LIS);
 
     return r.set(key, item);
   }, new Map()).values()];
@@ -38,14 +38,18 @@ $(document).ready(async function() {
   const filteredAlert = $('#summary').data('filtered-profile-loss');
   const dataTotal = $('#summary').data('total');
 
+  console.log({filteredProporsi, filteredProfileLoss, filteredAlert});
+
   const filteredProporsiFlat = filteredProporsi ? Object.values(filteredProporsi) : '';
   const filteredProfileLossFlat = filteredProfileLoss ? Object.values(filteredProfileLoss) : '';
   const filteredAlertFlat = filteredAlert ? Object.values(filteredAlert) : '';
+  console.log({filteredProporsiFlat, filteredProfileLossFlat, filteredAlertFlat});
   const groupedSummary = groupByWitel(filteredProporsiFlat);
+  console.log({groupedSummary});
   const groupedLoss = groupByWitel(filteredProfileLossFlat);
   const groupedAlert = groupByWitel(filteredAlertFlat);
-  const sumTotalLis = groupedSummary.reduce((adder, item) => adder + item.total_lis, 0);
-  const groupedPercentage = groupedSummary.map(item => ({...item, percentage: item.total_lis / sumTotalLis * 100}));
+  const sumTotalLis = groupedSummary.reduce((adder, item) => adder + item.TOTAL_LIS, 0);
+  const groupedPercentage = groupedSummary.map(item => ({...item, percentage: item.TOTAL_LIS / sumTotalLis * 100}));
 
   const canvasSummary = document.getElementById('summary');
   const ctxSummary = canvasSummary.getContext('2d');
@@ -67,14 +71,18 @@ $(document).ready(async function() {
     }]
   };
 
+  console.log({groupedPercentage});
+
   const dataProporsi = {
-    labels: groupedSummary.map(item => item.witel),
+    labels: groupedSummary.map(item => item.WITEL),
     datasets: [{
       label: 'Total LIS',
       data: groupedPercentage.map(item => item.percentage.toFixed(2)),
       backgroundColor: groupedSummary.map(item => '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0'))
     }]
   };
+
+  console.log({dataProporsi});
 
   const areaChartData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
