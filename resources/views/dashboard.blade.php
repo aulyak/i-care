@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 
 @php
+    
 @endphp
 
 @section('content_header')

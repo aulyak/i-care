@@ -7,6 +7,8 @@ use App\Imports\dataImport;
 use App\Services\CsvService;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Collection;
+use App\Models\Summary;
+use App\Models\Witel;
 
 class DashboardController extends Controller
 {
@@ -19,6 +21,7 @@ class DashboardController extends Controller
    */
   public function index(Request $request, CsvService $csvService)
   {
+    $data = Summary::get();
 
     $monthList = [
       'Januari',
@@ -52,7 +55,10 @@ class DashboardController extends Controller
     $totalLoss = 0;
     $totalVha = 0;
     $filteredProporsi = null;
-    $dataSummary = $csvService->readCsv('storage/Summary.csv');
+    $modelCollect = collect($data);
+    // $dataSummary = $csvService->readCsv('storage/Summary.csv');
+    $dataSummary = $modelCollect;
+
     $dataProfileLoss = $csvService->readCsv('storage/Profile Loss.csv');
     $dataAlert = $csvService->readCsv('storage/Alert.csv');
     $filteredSummary = $dataSummary;
@@ -64,8 +70,8 @@ class DashboardController extends Controller
     //   return $row['witel'];
     // });
     // $distinctWitel = $mappedWitel->unique();
-
-    $distinctWitel = $csvService->getUniqueByRowName($dataSummary, 'witel');
+    $distinctWitel = Witel::select('WITEL')->groupBy('WITEL')->get()->pluck('WITEL');
+    // $distinctWitel = $csvService->getUniqueByRowName($dataSummary, 'WITEL');
 
     if ($request->all()) {
       $witel = $request->witel;
@@ -75,6 +81,18 @@ class DashboardController extends Controller
       $filterMonth = str_pad($monthIndex, 2, '0', STR_PAD_LEFT);
       $filterMonthYear = $year . $filterMonth;
 
+      $filteredSummary = Summary::when($witel, function ($query) use ($witel) {
+        return $query->where('WITEL', $witel);
+      })
+        ->when($month, function ($query) use ($witel) {
+          return $query->where('WITEL', $witel);
+        })
+        ->get();
+
+      $filteredSummary->dd();
+
+
+      /* 
       if ($witel && $month && $year) {
         $filteredSummary = $dataSummary->filter(function ($row) use ($witel, $filterMonthYear) {
           return $row['witel'] === $witel && $row['bulan'] == $filterMonthYear;
@@ -191,7 +209,7 @@ class DashboardController extends Controller
         $filteredSummary = $dataSummary;
         $filteredProfileLoss = $dataProfileLoss;
         $filteredAlert = $dataAlert;
-      }
+      } */
     }
 
     $filteredDataAlertVh = $filteredAlert->filter(function ($row) {
