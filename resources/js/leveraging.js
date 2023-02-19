@@ -9,7 +9,7 @@ $(document).ready(function() {
     $('.time').text(localTime);
   }, 1000);
 
-  $('#example2').DataTable({
+  $('#TBL_PROUCT_TYPE_BY_WITEL').DataTable({
     "paging": true,
     "lengthChange": false,
     "searching": false,
@@ -22,7 +22,7 @@ $(document).ready(function() {
     // "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
     // "pageLength": 50
   });
-  $('#arpuxSpeed').DataTable({
+  $('#TBL_ARPU_X_SPEED').DataTable({
     "paging": true,
     "lengthChange": false,
     "searching": false,

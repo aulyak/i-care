@@ -23,69 +23,18 @@
       <div class="card-header">
         <form>
           <div class="row">
-            <div class="col-sm-6 col-md-2">
-              <!-- select -->
-              <div class="form-group">
-                <label>Witel</label>
-                <select class="form-control">
-                  <option>(ALL)</option>
-                  <option>option 2</option>
-                  <option>option 3</option>
-                  <option>option 4</option>
-                  <option>option 5</option>
-                </select>
-              </div>
-            </div>
+            @foreach ($options as $option)
             <div class="col-sm-6 col-md-2">
               <div class="form-group">
-                <label>STO</label>
+                <label>{{$option['LABEL']}}</label>
                 <select class="form-control">
-                  <option>(ALL)</option>
-                  <option>option 2</option>
-                  <option>option 3</option>
-                  <option>option 4</option>
-                  <option>option 5</option>
+                  @foreach ($option['DATA'] as $optionData )
+                  <option>{{ $optionData }}</option>
+                  @endforeach
                 </select>
               </div>
             </div>
-            <div class="col-sm-6 col-md-2">
-              <!-- select -->
-              <div class="form-group">
-                <label>Product</label>
-                <select class="form-control">
-                  <option>(ALL)</option>
-                  <option>option 2</option>
-                  <option>option 3</option>
-                  <option>option 4</option>
-                  <option>option 5</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-sm-6 col-md-2">
-              <div class="form-group">
-                <label>Ccat</label>
-                <select class="form-control">
-                  <option>(ALL)</option>
-                  <option>option 2</option>
-                  <option>option 3</option>
-                  <option>option 4</option>
-                  <option>option 5</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-sm-12 col-md-4">
-              <!-- select -->
-              <div class="form-group">
-                <label>Kwadran Inet</label>
-                <select class="form-control">
-                  <option>(ALL)</option>
-                  <option>option 2</option>
-                  <option>option 3</option>
-                  <option>option 4</option>
-                  <option>option 5</option>
-                </select>
-              </div>
-            </div>
+            @endforeach
           </div>
           <!-- input states -->
         </form>
@@ -133,7 +82,7 @@
               <tbody>
                 @foreach ($result as $res)
                 <tr>
-                  <td>{{ ($res['BULAN_SALES'] ?? '-') }}</td>
+                  <td>{{ ($res['GROUP'] ?? '-') }}</td>
                   @foreach ($agingQuery as $aq)
                   @if ($aq < count($res['AGING_PERCENTAGE'])) <td style="background-color: green;">{{ (round($res['AGING_PERCENTAGE'][$aq],2)*100 . '%' ?? '') }}</td>
                     @else
