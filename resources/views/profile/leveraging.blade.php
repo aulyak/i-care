@@ -23,15 +23,20 @@
             <div class="col-sm-4 col-md-{{ (strlen($OPTION['LABEL']) < 9 ? '1':'2')}}">
               <div class="form-group">
                 <label>{{$OPTION['LABEL']}}</label>
-                <select class="form-control">
+                <select name="{{$OPTION['KEY']}}" class="form-control">
                   @foreach ($OPTION['DATA'] as $DATA )
-                  <option>{{$DATA}}</option>
+                  @if ($OPTION['VALUE'] == $DATA)
+                  <option selected="selected" value="{{$DATA}}">{{$DATA}}</option>
+                  @else
+                  <option value="{{$DATA}}">{{$DATA}}</option>
+                  @endif
                   @endforeach
                 </select>
               </div>
             </div>
             @endforeach
           </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
           <!-- input states -->
         </form>
       </div>
@@ -263,5 +268,24 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.13.1/b-2.3.3/b-colvis-2.3.3/b-html5-2.3.3/b-print-2.3.3/r-2.4.0/sc-2.0.7/datatables.min.js"></script>
 <script src="js/app.js"></script>
-<script src="js/leveraging.js"></script>
+<script>
+  $(function() {
+    const defaultVar = {
+      "paging": false,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": true,
+      "scrollX": true,
+    }
+    $('#TBL_PROUCT_TYPE_BY_WITEL').DataTable({
+      ...defaultVar,
+    });
+    $('#TBL_ARPU_X_SPEED').DataTable({
+      ...defaultVar,
+      "pageLength": 10
+    });
+  });
+</script>
 @stop

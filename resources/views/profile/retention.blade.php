@@ -27,14 +27,19 @@
             <div class="col-sm-4 col-md-{{ (strlen($OPTION['LABEL']) < 9 ? '2':'3')}}">
               <div class="form-group">
                 <label>{{$OPTION['LABEL']}}</label>
-                <select class="form-control">
+                <select name="{{$OPTION['KEY']}}" class="form-control">
                   @foreach ($OPTION['DATA'] as $DATA )
-                  <option>{{$DATA}}</option>
+                  @if ($OPTION['VALUE'] == $DATA)
+                  <option selected="selected" value="{{$DATA}}">{{$DATA}}</option>
+                  @else
+                  <option value="{{$DATA}}">{{$DATA}}</option>
+                  @endif
                   @endforeach
                 </select>
               </div>
             </div>
             @endforeach
+            <button type="submit" class="btn btn-primary">Submit</button>
           </div>
           <!-- input states -->
         </form>

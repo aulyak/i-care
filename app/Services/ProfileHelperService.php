@@ -2,35 +2,45 @@
 
 namespace App\Services;
 
+use Barryvdh\Debugbar\Facades\Debugbar as FacadesDebugbar;
 
 class ProfileHelperService
 {
-  public $table;
-  function __construct($table)
+  public $chs;
+  public $request;
+  function __construct($model, $cacheTime = (24 * 60), $request)
   {
-    $this->table = $table;
+    $this->chs = new CommonHelperService($model, $cacheTime, $request);
+    $this->request = $request;
   }
+
   private function keyToTitle($key)
   {
     return ucwords(str_replace('_', ' ', strtolower($key)));
   }
-  private function transformNumber($num = null, $maxrand = 999999, $formatted = true)
-  {
-    $val = ($num == null ? rand(0, $maxrand) : $num);
-    if (!$formatted) return $val;
-    return number_format($val, 0, '.', ',');
-  }
+
   private function buildDummyData($count, $maxrand = 60000, $formatted = true)
   {
     $dummyData = array();
     for ($i = 0; $i < $count; $i++) {
-      array_push($dummyData, $this->transformNumber(null, $maxrand, $formatted));
+      array_push($dummyData, $this->chs->transformNumber(null, $maxrand, $formatted));
     }
     return $dummyData;
   }
+  private function getDefaultValue($key)
+  {
+    $val = $this->request->query($key);
+    if (isset($val)) {
+      return $val;
+    } else {
+      return 'All';
+    }
+  }
   private function fetchOption($key)
   {
-    $data['LABEL'] = $this->keyToTitle($key); // default label
+    $data['LABEL'] = $this->keyToTitle($key);
+    $data['KEY'] = $key;
+    $data['VALUE'] = $this->getDefaultValue($key);
     $defaultData = array('All'); // initial option to all
     $dummyData = array('OPTION1', 'OPTION2');
     if ($key == 'WITEL') {
@@ -43,6 +53,7 @@ class ProfileHelperService
       }
       $data['DATA'] = array_merge($defaultData, $dummyData);
     }
+    FacadesDebugbar::log($data);
     return $data;
   }
 
@@ -58,7 +69,7 @@ class ProfileHelperService
   {
     $data = null;
     foreach ($options as $option) {
-      $data[$option] = $this->transformNumber();
+      $data[$option] = $this->chs->transformNumber();
     }
     return $data;
   }

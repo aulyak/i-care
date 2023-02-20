@@ -3,36 +3,26 @@
 namespace App\Services;
 
 use App\Models\QOS;
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use App\Services\CommonHelperService;
+use Barryvdh\Debugbar\Facades\Debugbar;
 
 class QosHelperService
 {
-    private function keyToTitle($key)
+    public $chs;
+    public $request;
+    function __construct($model, $cacheTime = (24 * 60), $request)
     {
-        return ucwords(str_replace('_', ' ', strtolower($key)));
-    }
-    public function getDistinct($key, $asArray = false)
-    {
-        $result =  Cache::remember('QHS_DISTINCT_KEY_' . $key, now()->addMinutes(120), function () use ($key) {
-            return QOS::distinct()->get($key);
-        });
-        if ($asArray) {
-            $tmpArr = array();
-            foreach ($result as $res) {
-                array_push($tmpArr, $res[$key]);
-            }
-            return $tmpArr;
-        } else {
-            return $result;
-        }
+        $this->chs = new CommonHelperService($model, $cacheTime, $request);
+        $this->request = $request;
     }
 
     public function getAgingQuery()
     {
         return [0, 1, 6, 7, 8, 12, 13, 14, 18];
     }
+
     private function isValidGroupData($groupData, $groupKey)
     {
         if ($groupData == null) return false;
@@ -51,33 +41,24 @@ class QosHelperService
         }
         return true;
     }
-    private function fetchOption($key)
-    {
-        $data['LABEL'] = $this->keyToTitle($key);
-        $defaultData = array('All');
-        $distictRes = $this->getDistinct($key, true);
-        $data['DATA'] = array_merge($defaultData, $distictRes);
-        return $data;
-    }
     public function buildOptions($options)
     {
-        $result = array();
-        foreach ($options as $option) {
-            $result[$option] = $this->fetchOption($option);
-        }
-        return $result;
+        return $this->chs->buildOptions($options);
     }
+
     public function buildQuery($groupKey = 'BULAN_SALES')
     {
         $result = array();
-        $groups = $this->getDistinct($groupKey);
+        $groups = $this->chs->getDistinct($groupKey);
         foreach ($groups as $group) {
             $groupData = $group[$groupKey];
             if ($this->isValidGroupData($groupData, $groupKey)) {
                 $rawdata['GROUP'] = $groupData;
-                $rawdata['AGING_COUNT'] = Cache::remember('QHS_AGING_COUNT_' . $rawdata['GROUP'], now()->addMinutes(120), function () use ($groupData, $groupKey) {
-                    return QOS::select(DB::raw('count(*) as total_aging'))
-                        ->where($groupKey, '=', $groupData)
+                $rawdata['AGING_COUNT'] = Cache::remember('QHS_AGING_COUNT_' . $rawdata['GROUP'] . $this->chs->hasQuery(), now()->addMinutes(120), function () use ($groupData, $groupKey) {
+                    $query = QOS::select(DB::raw('count(*) as total_aging'))
+                        ->where($groupKey, '=', $groupData);
+                    $this->chs->proceedFilter($query);
+                    return $query
                         ->groupBy('AGING')
                         ->pluck('total_aging')->toArray();
                 });

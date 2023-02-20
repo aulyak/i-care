@@ -3,25 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\QOS;
+use App\Models\QOS as QOS;
 use App\Services\QosHelperService;
 
 class QoSController extends Controller
 {
-  public function qosBySales(Request $request, QosHelperService $QHS)
+  public $QHS;
+  function __construct(Request $request)
   {
-    $agingQuery = $QHS->getAgingQuery();
-    $result =  $QHS->buildQuery('BULAN_SALES');
-    $options = $QHS->buildOptions(['WITEL', 'STO', 'PRODUCT', 'CCAT', 'KWADRAN_INET']);
-    return view('qos.qos_by', compact('result', 'agingQuery', 'options'));
+    $this->QHS = new QosHelperService('QOS', NULL, $request);
+  }
+  public function qosBySales(Request $request)
+  {
+    $agingQuery = $this->QHS->getAgingQuery();
+    $result =  $this->QHS->buildQuery('BULAN_SALES');
+    $options = $this->QHS->buildOptions(['WITEL', 'STO', 'PRODUCT', 'CCAT', 'KWADRAN_INET']);
+    $pageType = 'Month';
+    return view('qos.qos_by', compact('result', 'agingQuery', 'options', 'pageType'));
   }
 
-  public function qosByWitel(Request $request, QosHelperService $QHS)
+  public function qosByWitel(Request $request)
   {
-    $agingQuery = $QHS->getAgingQuery();
-    $result =  $QHS->buildQuery('WITEL');
-    $options = $QHS->buildOptions(['BULAN_SALES', 'PRODUCT', 'CCAT', 'KWADRAN_INET']);
-    return view('qos.qos_by', compact('result', 'agingQuery', 'options'));
+    $agingQuery = $this->QHS->getAgingQuery();
+    $result =  $this->QHS->buildQuery('WITEL');
+    $options = $this->QHS->buildOptions(['BULAN_SALES', 'PRODUCT', 'CCAT', 'KWADRAN_INET']);
+    $pageType = 'Witel';
+    return view('qos.qos_by', compact('result', 'agingQuery', 'options', 'pageType'));
   }
 
   public function rawdata(Request $request)

@@ -1,9 +1,5 @@
 @extends('adminlte::page')
 
-@php
-
-@endphp
-
 @section('content_header')
 <div class="content-header">
   <div class="container-fluid">
@@ -12,7 +8,7 @@
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item">Quality Of Sales / <a href="#">Sales by Month</a></li>
+          <li class="breadcrumb-item">Quality Of Sales / <a href="#">Sales by {{ $pageType }}</a></li>
           <!-- <li class="breadcrumb-item active">Dashboard v1</li> -->
         </ol>
       </div><!-- /.col -->
@@ -27,15 +23,20 @@
             <div class="col-sm-6 col-md-2">
               <div class="form-group">
                 <label>{{$option['LABEL']}}</label>
-                <select class="form-control">
-                  @foreach ($option['DATA'] as $optionData )
-                  <option>{{ $optionData }}</option>
+                <select name="{{$option['KEY']}}" class="form-control">
+                  @foreach ($option['DATA'] as $DATA )
+                  @if ($option['VALUE'] == $DATA)
+                  <option selected="selected" value="{{$DATA}}">{{$DATA}}</option>
+                  @else
+                  <option value="{{$DATA}}">{{$DATA}}</option>
+                  @endif
                   @endforeach
                 </select>
               </div>
             </div>
             @endforeach
           </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
           <!-- input states -->
         </form>
       </div>
