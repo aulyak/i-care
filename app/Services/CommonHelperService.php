@@ -18,6 +18,10 @@ class CommonHelperService
         $this->request = $request;
         // $this->cacheTime = $cacheTime;
     }
+    public function getModel()
+    {
+        return $this->model;
+    }
     public function keyToTitle($key)
     {
         return ucwords(str_replace('_', ' ', strtolower($key)));
@@ -66,9 +70,9 @@ class CommonHelperService
         return $result;
     }
 
-    public function transformNumber($num = null, $maxrand = 999999, $formatted = true)
+    public function transformNumber($num = NULL, $maxrand = 999999, $formatted = true)
     {
-        $val = ($num == null ? rand(0, $maxrand) : $num);
+        $val = (isset($num) ? $num : rand(0, $maxrand));
         if (!$formatted) return $val;
         return number_format($val, 0, '.', ',');
     }

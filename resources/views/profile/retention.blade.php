@@ -58,50 +58,50 @@
         <div class="row" style="font-size: 80%;">
           <div class="col-sm-3 col-md-2" style="text-align: center;">
             <div class="color-palette-set border">
-              <div class="color-palette" style="font-weight: bold; background-color: #7e80f7; color: white;"><span>TOTAL CTO</span></div>
-              <div class="bg-light color-palette"><span>232,044</span></div>
+              <div class="color-palette" style="font-weight: bold; background-color: #7e80f7; color: white;"><span>TOTAL CT0</span></div>
+              <div class="bg-light color-palette"><span>{{$data['OVERVIEW']['TOTAL_CT0']}}</span></div>
             </div>
           </div>
           <div class="col-sm-3 col-md-1" style="text-align: center;">
             <div class="color-palette-set border">
               <div class="color-palette" style="background-color:#f2ae86; color: white; font-weight: bold;"><span>CAPS</span></div>
-              <div class="bg-light color-palette"><span>10,315</span></div>
+              <div class="bg-light color-palette"><span>{{$data['OVERVIEW']['CAPS']}}</span></div>
             </div>
           </div>
           <div class="col-sm-3 col-md-1" style="text-align: center;">
             <div class="color-palette-set border">
-              <div class="color-palette" style="background-color:#f2ae86; color: white; font-weight: bold;"><span>CTO</span></div>
-              <div class="bg-light color-palette"><span>99,850</span></div>
+              <div class="color-palette" style="background-color:#f2ae86; color: white; font-weight: bold;"><span>CT0</span></div>
+              <div class="bg-light color-palette"><span>{{$data['OVERVIEW']['CT0']}}</span></div>
             </div>
           </div>
           <div class="col-sm-3 col-md-2" style="text-align: center;">
             <div class="color-palette-set border">
-              <div class="color-palette" style="background-color:#f2ae86; color: white; font-weight: bold;"><span>CTO NDE</span></div>
-              <div class="bg-light color-palette"><span>5,878</span></div>
+              <div class="color-palette" style="background-color:#f2ae86; color: white; font-weight: bold;"><span>CT0 NDE</span></div>
+              <div class="bg-light color-palette"><span>{{$data['OVERVIEW']['CT0 NDE']}}</span></div>
             </div>
           </div>
           <div class="col-sm-3 col-md-1" style="text-align: center;">
             <div class="color-palette-set border">
               <div class="color-palette" style="background-color:#f2ae86; color: white; font-weight: bold;"><span>ABNOL</span></div>
-              <div class="bg-light color-palette"><span>8,058</span></div>
+              <div class="bg-light color-palette"><span>{{$data['OVERVIEW']['ABNOL']}}</span></div>
             </div>
           </div>
           <div class="col-sm-3 col-md-2" style="text-align: center; ">
             <div class="color-palette-set border">
               <div class="color-palette" style="background-color:#f2ae86; color: white; font-weight: bold;"><span>DUNNING</span></div>
-              <div class="bg-light color-palette"><span>7,877</span></div>
+              <div class="bg-light color-palette"><span>{{$data['OVERVIEW']['DUNNING']}}</span></div>
             </div>
           </div>
           <div class="col-sm-3 col-md-2" style="text-align: center;">
             <div class="color-palette-set border">
               <div class="color-palette" style="background-color:#f2ae86; color: white; font-weight: bold;"><span>HOMEWIFI</span></div>
-              <div class="bg-light color-palette"><span>9,3485</span></div>
+              <div class="bg-light color-palette"><span>{{$data['OVERVIEW']['HOMEWIFI']}}</span></div>
             </div>
           </div>
           <div class="col-sm-3 col-md-1" style="text-align: center;">
             <div class="color-palette-set border">
               <div class="color-palette" style="background-color:#f2ae86; color: white; font-weight: bold;"><span>CABUT</span></div>
-              <div class="bg-light color-palette"><span>6,579</span></div>
+              <div class="bg-light color-palette"><span>{{$data['OVERVIEW']['CABUT']}}</span></div>
             </div>
           </div>
         </div>
@@ -110,7 +110,7 @@
             <!-- BAR CHART -->
             <div class="card">
               <div class="card-header" style="text-align: center;">
-                <h3 class="card-title">Keterangan CTO</h3>
+                <h3 class="card-title">Keterangan CT0</h3>
               </div>
               <div class="card-body">
                 <div class="chart">
@@ -124,7 +124,7 @@
             <!-- PIE CHART -->
             <div class="card">
               <div class="card-header" style="text-align: center;">
-                <h3 class="card-title">Proporsi CTO</h3>
+                <h3 class="card-title">Proporsi CT0</h3>
               </div>
               <div class="card-body">
                 <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
@@ -138,7 +138,7 @@
       <div class="col-sm-12 col-md-4" style="width: 100%;">
         <div class="card" style="height: 24.5rem;">
           <div class="card-header" style="text-align: center;">
-            <h3 class="card-title">CTO PER WITEL</h3>
+            <h3 class="card-title">CT0 PER WITEL</h3>
           </div>
           <div class="card-body">
             <div class="chart">
@@ -156,7 +156,7 @@
           <div class="col-sm-12 col-md-4">
             <div class="card" style="height: 29.70rem;">
               <div class="card-header">
-                <h3 class="card-title">CTO PER UMUR CTO</h3>
+                <h3 class="card-title">CT0 PER UMUR CT0</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body" style="padding-top:20%">
@@ -164,7 +164,7 @@
                   <thead>
                     <tr>
                       <th></th>
-                      <th>NEW CTO</th>
+                      <th>NEW CT0</th>
                       <th>1-3 BULAN</th>
                       <th>4-6 BULAN</th>
                       <th>7-12 BULAN</th>
@@ -205,20 +205,6 @@
                       <td style="background-color: #9f263c;">17,087</td>
                     </tr>
                   </tbody>
-                  <!-- <tfoot>
-                          <tr style="font-weight: bold;">
-                            <td>GRAND TOTAL</td>
-                            <td style="background-color: green;">99.99%</td>
-                            <td style="background-color: green;">98.40%</td>
-                            <td style="background-color: green;">85.81%</td>
-                            <td style="background-color: green;">83.64%</td>
-                            <td style="background-color: green;">81.34%</td>
-                            <td style="background-color: yellow;">75.47%</td>
-                            <td style="background-color: yellow;">74.06%</td>
-                            <td style="background-color: yellow;">72.81%</td>
-                            <td style="background-color: yellow;">64.46%</td>
-                          </tr>
-                        </tfoot> -->
                 </table>
               </div>
               <!-- /.card-body -->
@@ -228,7 +214,7 @@
             <!-- PIE CHART -->
             <div class="card" style="height: 29.70rem;">
               <div class="card-header" style="text-align: center;">
-                <h3 class="card-title">CTO PER SEGMENT</h3>
+                <h3 class="card-title">CT0 PER SEGMENT</h3>
               </div>
               <div class="card-body" style="padding-top:20%">
                 <canvas id="ctoPieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
@@ -252,8 +238,8 @@
                       <th>BACKDATE</th>
                       <th>CABUT</th>
                       <th>CAPS</th>
-                      <th>CTO</th>
-                      <th>CTO NDE</th>
+                      <th>CT0</th>
+                      <th>CT0 NDE</th>
                       <th>DUNNING</th>
                       <th>HOMEWIFI</th>
                       <th>GRAND TOTAL</th>

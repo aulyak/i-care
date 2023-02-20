@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Barryvdh\Debugbar\Facades\Debugbar as FacadesDebugbar;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ProfileHelperService
 {
@@ -27,50 +29,28 @@ class ProfileHelperService
     }
     return $dummyData;
   }
-  private function getDefaultValue($key)
-  {
-    $val = $this->request->query($key);
-    if (isset($val)) {
-      return $val;
-    } else {
-      return 'All';
-    }
-  }
-  private function fetchOption($key)
-  {
-    $data['LABEL'] = $this->keyToTitle($key);
-    $data['KEY'] = $key;
-    $data['VALUE'] = $this->getDefaultValue($key);
-    $defaultData = array('All'); // initial option to all
-    $dummyData = array('OPTION1', 'OPTION2');
-    if ($key == 'WITEL') {
-      $witels = array('WITEL1', 'WITEL2', 'WITEL3', 'WITEL4');
-      $data['DATA'] = array_merge($defaultData, $witels);
-    } else {
-      $dummyData = array();
-      for ($i = 1; $i < rand(2, 10); $i++) {
-        array_push($dummyData, 'DUMMY ' . $key . ' ' . $i);
-      }
-      $data['DATA'] = array_merge($defaultData, $dummyData);
-    }
-    FacadesDebugbar::log($data);
-    return $data;
-  }
 
   public function buildOption($options)
   {
-    $data = null;
-    foreach ($options as $option) {
-      $data[$option] = $this->fetchOption($option);
-    }
-    return $data;
+    return $this->chs->buildOptions($options);
   }
+
   public function buildOverview($options)
   {
     $data = null;
     foreach ($options as $option) {
-      $data[$option] = $this->chs->transformNumber();
+      $res = Cache::remember('PHS_OVERVIEW_' . $option . 'COUNT_' . $this->chs->hasQuery(), now()->addMinutes(120), function () use ($option) {
+        $query = $this->chs->getModel()::select(DB::raw('count(*) as ct'));
+        if ($option != 'TOTAL_CT0') {
+          $query->where('KET_CT0', $option);
+        }
+        $this->chs->proceedFilter($query);
+        return $query->pluck('ct')[0];
+      });
+      FacadesDebugbar::log($res);
+      $data[$option] = $this->chs->transformNumber($res);
     }
+    FacadesDebugbar::log($data);
     return $data;
   }
 

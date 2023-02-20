@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProfileLoss extends Model
+class ProfileChurn extends Model
 {
-  protected $table = 'PROFIL_LOSS';
+    protected $table = 'CT0_CURRENT';
 }

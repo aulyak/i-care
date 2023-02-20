@@ -10,7 +10,7 @@ class ProfileController extends Controller
   public $PHS;
   function __construct(Request $request)
   {
-    $this->PHS = new ProfileHelperService('ProfileLoss', 120, $request);
+    // Nothing
   }
   public function profileLeveraging(Request $request)
   {
@@ -25,17 +25,19 @@ class ProfileController extends Controller
 
   public function profileRetention(Request $request)
   {
+    $this->PHS = new ProfileHelperService('ProfileRetention', NULL, $request);
     $data = [
-      'OPTIONS' => $this->PHS->buildOption(['WITEL', 'STO', 'SEGMENT', 'PERIODE', 'KET_CT02']),
-      'OVERVIEW' => $this->PHS->buildOverview(['TOTAL_CTO', 'CAPS', 'CTO', 'CTO NDE', 'ABNOL', 'DUNNING', 'HOMEWIFI', 'CABUT']),
-      'CHART' => $this->PHS->buildChart(['KETERANGAN_CTO', 'PROPORSI_CTO', 'CTO_PER_SEGMEN', 'CTO_PER_WITEL',]),
-      'TABLE' => $this->PHS->buildTable(['CTO_PER_UMUR_CTO', 'DETAIL_PER_WITEL']),
+      'OPTIONS' => $this->PHS->buildOption(['WITEL', 'STO', 'SEGMENT', 'PERIODE', 'KET_CT0']),
+      'OVERVIEW' => $this->PHS->buildOverview(['TOTAL_CT0', 'CAPS', 'CT0', 'CT0 NDE', 'ABNOL', 'DUNNING', 'HOMEWIFI', 'CABUT']),
+      'CHART' => $this->PHS->buildChart(['KETERANGAN_CT0', 'PROPORSI_CT0', 'CT0_PER_SEGMEN', 'CT0_PER_WITEL',]),
+      'TABLE' => $this->PHS->buildTable(['CT0_PER_UMUR_CT0', 'DETAIL_PER_WITEL']),
     ];
     return view('profile.retention', compact('data'));
   }
 
   public function profileListKwadran(Request $request)
   {
+    $this->PHS = new ProfileHelperService('ProfileListKwadran', NULL, $request);
     $data = [
       'OPTIONS' => $this->PHS->buildOption(['WITEL']),
       'TABLE' => $this->PHS->buildTable([
@@ -47,6 +49,7 @@ class ProfileController extends Controller
 
   public function profileChurn(Request $request)
   {
+    $this->PHS = new ProfileHelperService('ProfileChurn', NULL, $request);
     $data = [
       'TABLE' => $this->PHS->buildTable([
         'DISTRIBUSI_CHURN_TO_SALES_PER_WITEL',
