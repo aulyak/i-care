@@ -62,13 +62,13 @@
           <div class="col-sm-4 col-md-2" style="text-align: center;">
             <div class="color-palette-set border">
               <div class="color-palette" style="background-color:chocolate; color: white; font-weight: bold;"><span>1P INET</span></div>
-              <div class="bg-light color-palette"><span>{{ $data['OVERVIEW']['1P INET']}}</span></div>
+              <div class="bg-light color-palette"><span>{{ $data['OVERVIEW']['1P_INET']}}</span></div>
             </div>
           </div>
           <div class="col-sm-4 col-md-2" style="text-align: center;">
             <div class="color-palette-set border">
               <div class="bg-success color-palette" style="font-weight: bold;"><span>2P (POTS-INET)</span></div>
-              <div class="bg-light color-palette"><span>{{ $data['OVERVIEW']['2P (POTS-INET)']}}</span></div>
+              <div class="bg-light color-palette"><span>{{ $data['OVERVIEW']['2P_POTS_INET']}}</span></div>
             </div>
           </div>
           <div class="col-sm-4 col-md-2" style="text-align: center;">
@@ -80,13 +80,13 @@
           <div class="col-sm-4 col-md-2" style="text-align: center;">
             <div class="color-palette-set border">
               <div class="bg-danger color-palette" style="font-weight: bold;"><span>HOMEWIFI</span></div>
-              <div class="bg-light color-palette"><span>{{ $data['OVERVIEW']['HOMEWIFI']}}</span></div>
+              <div class="bg-light color-palette"><span>{{ $data['OVERVIEW']['']}}</span></div>
             </div>
           </div>
           <div class="col-sm-4 col-md-2" style="text-align: center;">
             <div class="color-palette-set border">
               <div class="bg-danger color-palette" style="font-weight: bold;"><span>2P BRITE</span></div>
-              <div class="bg-light color-palette"><span>{{ $data['OVERVIEW']['2P BRITE']}}</span></div>
+              <div class="bg-light color-palette"><span>{{ $data['OVERVIEW']['2P_INET_USEE']}}</span></div>
             </div>
           </div>
         </div>

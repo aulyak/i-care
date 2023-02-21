@@ -10,10 +10,12 @@ class ProfileHelperService
 {
   public $chs;
   public $request;
+  public $model;
   function __construct($model, $cacheTime = (24 * 60), $request)
   {
     $this->chs = new CommonHelperService($model, $cacheTime, $request);
     $this->request = $request;
+    $this->model = $model;
   }
 
   private function keyToTitle($key)
@@ -39,13 +41,16 @@ class ProfileHelperService
   {
     $data = null;
     foreach ($options as $option) {
-      $res = Cache::remember('PHS_OVERVIEW_' . $option . 'COUNT_' . $this->chs->hasQuery(), now()->addMinutes(120), function () use ($option) {
-        $query = $this->chs->getModel()::select(DB::raw('count(*) as ct'));
-        if ($option != 'TOTAL_CT0') {
+      $res = Cache::remember($this->model . '_PHS_OVERVIEW_' . $option . 'COUNT_' . $this->chs->hasQuery(), now()->addMinutes(120), function () use ($option) {
+        $query = $this->chs->getModel()::select(DB::raw('count(*) as dt'));
+        if ($this->model == "ProfileLeveraging" & $option != 'ALL_DATA') {
+          $query->where('PRODUCT2', $option);
+        }
+        if ($this->model == "ProfileRetention" & $option != 'TOTAL_CT0') {
           $query->where('KET_CT0', $option);
         }
         $this->chs->proceedFilter($query);
-        return $query->pluck('ct')[0];
+        return $query->pluck('dt')[0];
       });
       FacadesDebugbar::log($res);
       $data[$option] = $this->chs->transformNumber($res);
@@ -83,27 +88,28 @@ class ProfileHelperService
       ]
     ];
     if ($key == 'PRODUCT_TYPE') {
+      $chartData = $this->chs->buildChartData('PRODUCT');
       return app()->chartjs
         ->name($key)
         ->type('bar')
-        ->size(['width' => 400, 'height' => 200])
-        ->labels(['1P-INTERNET (INTERNET)', '2P (POTS-INTERNET)', '2P-BRITE', '2P-GAMER', '2P-HOMEWIFI', '2P-LITE', '2P-NETIZEN (POTS-INTERNET)', '2P-PREPAID', '3P (POTS-INTERNET-IPTV)'])
+        ->size(['width' => 200, 'height' => 300])
+        ->labels($chartData['LABEL'])
         ->datasets([
-          ['data' => $this->buildDummyData(9, 100)],
+          ['data' => $chartData['DATA']],
         ])
         ->options(array_merge($defaultOptions, $defaultNoGrid, $defaultNoLegend, [
           'indexAxis' => 'y'
         ]));
     } elseif ($key == 'PROPORSI_PRODUCT') {
+      $chartData = $this->chs->buildChartData('PRODUCT', true);
       return app()->chartjs
         ->name($key)
         ->type('pie')
         ->size(['width' => 400, 'height' => 200])
-        ->labels(['1P INET', '2P (POTS-INET)', '3P', 'HOMEWIFI'])
+        ->labels($chartData['LABEL'])
         ->datasets([
           [
-            'data' => [rand(0, 700), rand(0, 700), rand(0, 700), rand(0, 700)],
-            'backgroundColor' => ['#d2691e', '#28a745', '#007bff', '#dc3545'],
+            'data' => $chartData['DATA'],
           ]
         ])
         ->options($defaultOptions);
@@ -152,13 +158,14 @@ class ProfileHelperService
           ]
         ));
     } elseif ($key == 'KATEGORY_ARPU') {
+      $chartData = $this->chs->buildChartData('KAT_ARPU');
       return app()->chartjs
         ->name($key)
         ->type('bar')
         ->size(['width' => 400, 'height' => 200])
-        ->labels(['>=700K', '500K-700K', '300K-500K', '<300K'])
+        ->labels($chartData['LABEL'])
         ->datasets([
-          ['data' => $this->buildDummyData(4, 120000, false)],
+          ['data' => $chartData['DATA']],
         ])
         ->options(array_merge(
           $defaultOptions,
@@ -169,13 +176,14 @@ class ProfileHelperService
           ]
         ));
     } elseif ($key == 'JUMLAH_GANGGUAN') {
+      $chartData = $this->chs->buildChartData('JML_GANGGUAN');
       return app()->chartjs
         ->name($key)
         ->type('bar')
         ->size(['width' => 400, 'height' => 200])
-        ->labels(['2X-5X', '5X-10X', '<2X', '>=10X', 'NO TICKET'])
+        ->labels($chartData['LABEL'])
         ->datasets([
-          ['data' => $this->buildDummyData(5, 600000, false)],
+          ['data' => $chartData['DATA']],
         ])
         ->options(array_merge(
           $defaultOptions,
@@ -185,6 +193,32 @@ class ProfileHelperService
             'indexAxis' => 'y'
           ]
         ));
+    } elseif ($key == 'KETERANGAN_CT0') {
+      $chartData = $this->chs->buildChartData('KET_CT0');
+      return app()->chartjs
+        ->name($key)
+        ->type('bar')
+        ->size(['width' => 200, 'height' => 300])
+        ->labels($chartData['LABEL'])
+        ->datasets([
+          ['data' => $chartData['DATA']],
+        ])
+        ->options(array_merge($defaultOptions, $defaultNoGrid, $defaultNoLegend, [
+          'indexAxis' => 'y'
+        ]));
+    } elseif ($key == 'PROPORSI_CT0') {
+      $chartData = $this->chs->buildChartData('KET_CT0', true);
+      return app()->chartjs
+        ->name($key)
+        ->type('pie')
+        ->size(['width' => 400, 'height' => 200])
+        ->labels($chartData['LABEL'])
+        ->datasets([
+          [
+            'data' => $chartData['DATA'],
+          ]
+        ])
+        ->options($defaultOptions);
     } else {
       /* DUMMY DATA */
       return app()->chartjs
@@ -224,6 +258,7 @@ class ProfileHelperService
     $tbl['HEAD'] = array();
     $tbl['ROW'] = array();
     if ($key == 'PROUCT_TYPE_BY_WITEL') {
+      $mtable = $this->chs->buildTableData('PRODUCT', 'WITEL');
       $tbl['HEAD'] = array('', '1P-INTERNET (INTERNET)', '2P (POTS-INTERNET)', '2P-BRITE', '2P-GAMER', '2P-HOMEWIFI', '2P-LITE', '2P-NETIZEN (POTS-INTERNET)', '2P-PREPAID', '3P (POTS-INTERNET-IPTV)');
       $tbl['ROW'] = array(
         array_merge(array('JAKBAR'), $this->buildDummyData(9)),

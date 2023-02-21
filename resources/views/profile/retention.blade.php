@@ -114,7 +114,8 @@
               </div>
               <div class="card-body">
                 <div class="chart">
-                  <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                  <!-- <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas> -->
+                  {!! $data['CHART']['KETERANGAN_CT0']->render() !!}
                 </div>
               </div>
               <!-- /.card-body -->
@@ -127,7 +128,8 @@
                 <h3 class="card-title">Proporsi CT0</h3>
               </div>
               <div class="card-body">
-                <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                <!-- <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas> -->
+                {!! $data['CHART']['PROPORSI_CT0']->render() !!}
               </div>
               <!-- /.card-body -->
             </div>

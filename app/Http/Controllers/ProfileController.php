@@ -14,9 +14,10 @@ class ProfileController extends Controller
   }
   public function profileLeveraging(Request $request)
   {
+    $this->PHS = new ProfileHelperService('ProfileLeveraging', NULL, $request);
     $data = [
-      'OPTIONS' => $this->PHS->buildOption(['WITEL', 'STO', 'TEHNO', 'PLBLCL', 'KAT_ARPU', 'KWADRAN_INET', 'RANGE_UMUR', 'SPEED', 'JAM_GANGGUAN']),
-      'OVERVIEW' => $this->PHS->buildOverview(['ALL_DATA', '1P INET', '2P (POTS-INET)', '3P', 'HOMEWIFI', '2P BRITE']),
+      'OPTIONS' => $this->PHS->buildOption(['WITEL', 'STO', 'TECHNO', 'PLBLCL', 'KAT_ARPU', 'KWADRAN_INDIHOME', 'RANGE_UMUR', 'SPEED', 'JML_GANGGUAN']),
+      'OVERVIEW' => $this->PHS->buildOverview(['ALL_DATA', '1P_INET', '2P_POTS_INET', '3P', '', '2P_INET_USEE']),
       'CHART' => $this->PHS->buildChart(['PRODUCT_TYPE', 'PROPORSI_PRODUCT', 'USAGE', 'FUP', 'KATEGORY_ARPU', 'JUMLAH_GANGGUAN',]),
       'TABLE' => $this->PHS->buildTable(['PROUCT_TYPE_BY_WITEL', 'ARPU_X_SPEED'])
     ];
