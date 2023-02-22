@@ -87,7 +87,7 @@ function transformArray(array) {
   // create a new object for each label and its corresponding data
   labels.forEach(label => {
     const data = arr.map(obj => obj[label] || 0); // map values to an array
-    result.push({label, data, type: 'bar', yAxisID: 'bar'});
+    result.push({label, data, type: 'bar', yAxisID: 'y1'});
   });
 
   return result;
@@ -116,24 +116,17 @@ $(document).ready(async function() {
   const dataTotal = $('#summary').data('total');
 
   const witel = $('select[name="witel"');
-  console.log({witel: witel.val()});
   const isSelectedWitel = $(witel).val() !== '';
-  console.log({isSelectedWitel});
-
-  console.log({filteredProporsi, filteredProfileLoss, filteredAlert});
 
   const filteredProporsiFlat = filteredProporsi ? Object.values(filteredProporsi) : '';
   const filteredProfileLossFlat = filteredProfileLoss ? Object.values(filteredProfileLoss) : '';
   const filteredAlertFlat = filteredAlert ? Object.values(filteredAlert) : '';
-  console.log({filteredProporsiFlat, filteredProfileLossFlat, filteredAlertFlat});
   const groupedSummary = groupByWitelOrSTO(filteredProporsiFlat, isSelectedWitel);
-  console.log({groupedSummary});
   const sumTotalLis = groupedSummary.reduce((adder, item) => adder + item.TOTAL_LIS, 0);
   const groupedPercentage = groupedSummary.map(item => ({...item, percentage: item.TOTAL_LIS / sumTotalLis * 100}));
   const groupedProfileLossByYearMonth = groupProfileLossByYearMonth(filteredProfileLoss);
   const groupedSummaryByYearMonth = groupSummaryByYearMonth(filteredProporsi);
   const mergedTrendDataBars = groupedSummaryByYearMonth.map(item => {
-    // console.log({item});
     const findSameYearMonth = groupedProfileLossByYearMonth.find(profile => profile.BULAN === item.BULAN);
 
     let totalLoss = 0;
@@ -144,21 +137,18 @@ $(document).ready(async function() {
 
     return {
       'BULAN': item.BULAN,
-      'TOTAL_LOSS': item.TOTAL_LOSS,
-      'TOTAL_SALES': item.TOTAL_SALES,
-      'TARGET_SALES': item.TARGET_SALES,
+      'TOTAL LOSS': item.TOTAL_LOSS,
+      'TOTAL SALES': item.TOTAL_SALES,
+      'TARGET SALES': item.TARGET_SALES,
     };
-
-    return item;
   });
 
   const mergedTrendDataLine = mergedTrendDataBars.map(item => {
     return {
       'BULAN': item.BULAN,
-      'LOSS_TO_SALES': parseFloat(item.TOTAL_LOSS) / parseFloat(item.TOTAL_LOSS) * 100,
+      'LOSS_TO_SALES': (parseFloat(item['TOTAL LOSS']) / parseFloat(item['TOTAL SALES'])) * 100,
     };
   });
-  console.log({groupedProfileLossByYearMonth, groupedSummaryByYearMonth, mergedTrendDataBars, mergedTrendDataLine});
 
   const canvasSummary = document.getElementById('summary');
   const ctxSummary = canvasSummary.getContext('2d');
@@ -173,29 +163,26 @@ $(document).ready(async function() {
     const monthNum = parseInt(item.BULAN.substr(item.BULAN.length - 2, 2));
     return monthList[monthNum - 1];
   });
-  console.log({labelsTrendMonth});
 
   const dataSetSummary = [];
   for (let i = 0; i < labelsSummary.length; i++) {
     dataSetSummary.push({x: labelsSummary[i], y: dataSummaryRaw[i]});
   }
 
+  const dataLossToSales = mergedTrendDataLine.map(item => item.LOSS_TO_SALES);
+
   const dataSetTrend = transformArray(mergedTrendDataBars);
   dataSetTrend.push({
     type: 'line',
-    label: 'Line Dataset',
-    data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-    yAxisID: 'line'
+    label: 'LOSS TO SALES',
+    data: dataLossToSales,
+    yAxisID: 'y'
   });
-
-  console.log({dataSetTrend});
 
   const dataTrend = {
     labels: labelsTrendMonth,
     datasets: dataSetTrend
   };
-
-  console.log({dataTrend});
 
   const dataSummary = {
     datasets: [{
@@ -203,8 +190,6 @@ $(document).ready(async function() {
       backgroundColor: Object.keys(dataTotal).map(item => '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0'))
     }]
   };
-
-  console.log({groupedPercentage});
 
   const dataProporsi = {
     labels: groupedSummary.map(item => isSelectedWitel ? item.STO : item.WITEL),
@@ -214,8 +199,6 @@ $(document).ready(async function() {
       backgroundColor: groupedSummary.map(item => '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')),
     }]
   };
-
-  console.log({dataProporsi});
 
   const areaChartData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -302,42 +285,23 @@ $(document).ready(async function() {
   });
 
   const trendChart = new Chart(ctxTrend, {
-    // type: 'bar',
     data: dataTrend,
     options: {
       responsive: true,
       scales: {
-        // y: {
-        //   beginAtZero: true,
-        // },
-        line: {
-          type: 'linear',
-          display: true,
-          position: 'left'
-        },
-        bar: {
-          type: 'bar',
+        y: {
           display: true,
           position: 'right'
+        },
+        y1: {
+          display: true,
+          position: 'left'
         }
-        // yAxes: [{
-        //   id: 'A',
-        //   type: 'linear',
-        //   position: 'left',
-        // }, {
-        //   id: 'B',
-        //   type: 'linear',
-        //   position: 'right',
-        //   ticks: {
-        //     max: 1,
-        //     min: 0
-        //   }
-        // }]
       },
       plugins: {
         legend: {
           position: 'top',
-          display: false,
+          display: true,
         },
         title: {
           display: true,
