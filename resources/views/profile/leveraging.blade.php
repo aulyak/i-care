@@ -91,7 +91,7 @@
           </div>
         </div>
         <div class="row" style=" margin-top: 1rem;">
-          <div class="col-sm-12 col-md-9">
+          <div class="col-sm-12 col-md-8">
             <!-- BAR CHART -->
             <div class="card" style="height: 25rem;">
               <div class="card-header" style="text-align: center;">
@@ -106,7 +106,7 @@
               <!-- /.card-body -->
             </div>
           </div>
-          <div class="col-sm-12 col-md-3">
+          <div class="col-sm-12 col-md-4">
             <!-- PIE CHART -->
             <div class="card" style="height: 25rem;">
               <div class="card-header" style="text-align: center;">

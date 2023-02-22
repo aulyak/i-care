@@ -13,13 +13,13 @@ class AlertController extends Controller
 
   public function __construct(CsvService $csvService)
   {
-    $this->alertData = $csvService->readCsv('storage/Alert.csv');
-    $this->distinctWitel = $csvService->getUniqueByRowName($this->alertData, 'witel');
-    $this->distinctSto = $csvService->getUniqueByRowName($this->alertData, 'sto');
-    $this->distinctBulanAlert = $csvService->getUniqueByRowName($this->alertData, 'bulan_alert');
-    $this->distinctStatus = $csvService->getUniqueByRowName($this->alertData, 'status');
-    $this->distinctKategoriHvc = $csvService->getUniqueByRowName($this->alertData, 'atribut');
-    $this->distinctHvcWaGroup = $csvService->getUniqueByRowName($this->alertData, 'hvc_wa_group');
+    // $this->alertData = $csvService->readCsv('storage/Alert.csv');
+    // $this->distinctWitel = $csvService->getUniqueByRowName($this->alertData, 'witel');
+    // $this->distinctSto = $csvService->getUniqueByRowName($this->alertData, 'sto');
+    // $this->distinctBulanAlert = $csvService->getUniqueByRowName($this->alertData, 'bulan_alert');
+    // $this->distinctStatus = $csvService->getUniqueByRowName($this->alertData, 'status');
+    // $this->distinctKategoriHvc = $csvService->getUniqueByRowName($this->alertData, 'atribut');
+    // $this->distinctHvcWaGroup = $csvService->getUniqueByRowName($this->alertData, 'hvc_wa_group');
   }
 
   public function viewByAge(Request $request, ProcessData $processData)

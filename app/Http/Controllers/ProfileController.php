@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\ProfileHelperService;
+use Illuminate\Support\Facades\Http;
 
 class ProfileController extends Controller
 {
@@ -12,14 +13,30 @@ class ProfileController extends Controller
   {
     // Nothing
   }
+  public function profileCaching($cachekey, Request $request)
+  {
+    $key = explode('-', $cachekey);
+    $this->PHS = new ProfileHelperService($key[0], NULL, $request);
+    $resp = '';
+    if ($key[1] == 'option') $resp = $this->PHS->buildOption(array($key[2]));
+    if ($key[1] == 'overview') $resp = $this->PHS->buildOverview(array($key[2]));
+    if ($key[1] == 'chart') $resp = $this->PHS->buildChart(array($key[2]));
+    if ($key[1] == 'table') $resp = $this->PHS->buildTable(array($key[2]));
+    return $resp;
+  }
+
   public function profileLeveraging(Request $request)
   {
     $this->PHS = new ProfileHelperService('ProfileLeveraging', NULL, $request);
+    $options = ['WITEL', 'STO', 'TECHNO', 'PLBLCL', 'KAT_ARPU', 'KWADRAN_INDIHOME', 'RANGE_UMUR', 'SPEED', 'JML_GANGGUAN'];
+    $overviews = ['ALL_DATA', '1P_INET', '2P_POTS_INET', '3P', '', '2P_INET_USEE'];
+    $charts = ['PRODUCT_TYPE', 'PROPORSI_PRODUCT', 'USAGE', 'FUP', 'KATEGORY_ARPU', 'JUMLAH_GANGGUAN'];
+    $tables = ['PROUCT_TYPE_BY_WITEL', 'ARPU_X_SPEED'];
     $data = [
-      'OPTIONS' => $this->PHS->buildOption(['WITEL', 'STO', 'TECHNO', 'PLBLCL', 'KAT_ARPU', 'KWADRAN_INDIHOME', 'RANGE_UMUR', 'SPEED', 'JML_GANGGUAN']),
-      'OVERVIEW' => $this->PHS->buildOverview(['ALL_DATA', '1P_INET', '2P_POTS_INET', '3P', '', '2P_INET_USEE']),
-      'CHART' => $this->PHS->buildChart(['PRODUCT_TYPE', 'PROPORSI_PRODUCT', 'USAGE', 'FUP', 'KATEGORY_ARPU', 'JUMLAH_GANGGUAN',]),
-      'TABLE' => $this->PHS->buildTable(['PROUCT_TYPE_BY_WITEL', 'ARPU_X_SPEED'])
+      'OPTIONS' => $this->PHS->buildOption($options),
+      'OVERVIEW' => $this->PHS->buildOverview($overviews),
+      'CHART' => $this->PHS->buildChart($charts),
+      'TABLE' => $this->PHS->buildTable($tables)
     ];
     return view('profile.leveraging', compact('data'));
   }

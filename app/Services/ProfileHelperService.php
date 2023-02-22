@@ -5,13 +5,14 @@ namespace App\Services;
 use Barryvdh\Debugbar\Facades\Debugbar as FacadesDebugbar;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Process\Pool;
 
 class ProfileHelperService
 {
   public $chs;
   public $request;
   public $model;
-  function __construct($model, $cacheTime = (24 * 60), $request)
+  function __construct($model, $cacheTime, $request)
   {
     $this->chs = new CommonHelperService($model, $cacheTime, $request);
     $this->request = $request;
@@ -41,8 +42,8 @@ class ProfileHelperService
   {
     $data = null;
     foreach ($options as $option) {
-      $res = Cache::remember($this->model . '_PHS_OVERVIEW_' . $option . 'COUNT_' . $this->chs->hasQuery(), now()->addMinutes(120), function () use ($option) {
-        $query = $this->chs->getModel()::select(DB::raw('count(*) as dt'));
+      $res = Cache::remember($this->model . '_PHS_OVERVIEW_' . $option . 'COUNT_' . $this->chs->hasQuery(), $this->chs->cacheTime, function () use ($option) {
+        $query = $this->chs->model::select(DB::raw('count(*) as dt'));
         if ($this->model == "ProfileLeveraging" & $option != 'ALL_DATA') {
           $query->where('PRODUCT2', $option);
         }
@@ -52,10 +53,8 @@ class ProfileHelperService
         $this->chs->proceedFilter($query);
         return $query->pluck('dt')[0];
       });
-      FacadesDebugbar::log($res);
       $data[$option] = $this->chs->transformNumber($res);
     }
-    FacadesDebugbar::log($data);
     return $data;
   }
 
@@ -259,24 +258,31 @@ class ProfileHelperService
     $tbl['ROW'] = array();
     if ($key == 'PROUCT_TYPE_BY_WITEL') {
       $mtable = $this->chs->buildTableData('PRODUCT', 'WITEL');
-      $tbl['HEAD'] = array('', '1P-INTERNET (INTERNET)', '2P (POTS-INTERNET)', '2P-BRITE', '2P-GAMER', '2P-HOMEWIFI', '2P-LITE', '2P-NETIZEN (POTS-INTERNET)', '2P-PREPAID', '3P (POTS-INTERNET-IPTV)');
-      $tbl['ROW'] = array(
-        array_merge(array('JAKBAR'), $this->buildDummyData(9)),
-        array_merge(array('JAKPUS'), $this->buildDummyData(9)),
-        array_merge(array('JAKSEL'), $this->buildDummyData(9))
-      );
+      $tbl['HEAD'] = $mtable['HEAD'];
+      $tbl['ROW'] = $mtable['ROW'];
     } elseif ($key == 'ARPU_X_SPEED') {
-      $tbl['HEAD'] = array('', '300K-500K', '500K-700K', '< 300K', '>= 700K');
-      $tbl['ROW'] = array(
-        array_merge($this->buildDummyData(5)),
-        array_merge($this->buildDummyData(5)),
-        array_merge($this->buildDummyData(5))
-      );
+      $mtable = $this->chs->buildTableData(array(
+        ['title' => 'ARPU'],
+        ['title' => '< 300K', 'whereRaw' => 'SPEED < 30000'],
+        ['title' => '300K-500K', 'whereRaw' => 'SPEED >= 30000 AND SPEED < 500000'],
+        ['title' => '500K-700K', 'whereRaw' => 'SPEED >= 500000 AND SPEED < 700000'],
+        ['title' => '>= 700K', 'whereRaw' => 'SPEED >= 70000'],
+      ), 'SPEED');
+      $tbl['HEAD'] = $mtable['HEAD'];
+      $tbl['ROW'] = $mtable['ROW'];
     }
     return $tbl;
   }
 
   public function buildTable($options)
+  {
+    $data = null;
+    foreach ($options as $option) {
+      $data[$option] = $this->tableBuilder($option);
+    }
+    return $data;
+  }
+  public function buildTableCache($options)
   {
     $data = null;
     foreach ($options as $option) {
