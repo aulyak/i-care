@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-(()=>{var e=luxon.DateTime;$(document).ready((function(){setInterval((function(){var t=e.now(),a=t.toLocaleString({weekday:"long",month:"long",day:"2-digit",year:"numeric"}),n=t.toFormat("HH:mm");$(".date").text(a),$(".time").text(n)}),1e3),$("#example1").DataTable({responsive:!0,lengthChange:!1,autoWidth:!1,buttons:["copy","csv","excel","pdf","print","colvis"]}).buttons().container().appendTo("#example1_wrapper .col-md-6:eq(0)"),$("#example2").DataTable({paging:!0,lengthChange:!1,searching:!1,ordering:!0,info:!0,autoWidth:!1,responsive:!0})}))})();
-//# sourceMappingURL=qos_sales.js.map
-=======
 /*
  * ATTENTION: An "eval-source-map" devtool has been used.
  * This devtool is neither made for production nor for readable output files.
@@ -34,4 +30,3 @@ eval("var dt = luxon.DateTime;\n$(document).ready(function () {\n  setInterval(f
 /******/ 	
 /******/ })()
 ;
->>>>>>> dashboard

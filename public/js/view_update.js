@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-(()=>{function t(e){return t="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},t(e)}function e(e,a,o){return(a=function(e){var a=function(e,a){if("object"!==t(e)||null===e)return e;var o=e[Symbol.toPrimitive];if(void 0!==o){var n=o.call(e,a||"default");if("object"!==t(n))return n;throw new TypeError("@@toPrimitive must return a primitive value.")}return("string"===a?String:Number)(e)}(e,"string");return"symbol"===t(a)?a:String(a)}(a))in e?Object.defineProperty(e,a,{value:o,enumerable:!0,configurable:!0,writable:!0}):e[a]=o,e}var a=luxon.DateTime;$(document).ready((function(){var t;setInterval((function(){var t=a.now(),e=t.toLocaleString({weekday:"long",month:"long",day:"2-digit",year:"numeric"}),o=t.toFormat("HH:mm");$(".date").text(e),$(".time").text(o)}),1e3);var o=$("#filter-form").data("filtered-data");console.log({filteredData:o});var n=Object.values(o).map((function(t){return{notel:t.notel,witel:t.witel,sto:t.sto,tgl_ps:t.tgl_ps,age:t.age,atribut:t.atribut,alert:t.alert,score:t.score,bulan_alert:t.bulan_alert,status:t.status,deskripsi:t.deskripsi,action:""}}));console.log({data:n}),$("#table-update").DataTable((t={responsive:!0,lengthChange:!1,autoWidth:!1,buttons:["copy","csv","excel","pdf","print","colvis"],paging:!0},e(t,"lengthChange",!1),e(t,"searching",!1),e(t,"ordering",!0),e(t,"info",!0),e(t,"autoWidth",!1),e(t,"responsive",!0),e(t,"data",n),e(t,"columns",[{data:"notel"},{data:"witel"},{data:"sto"},{data:"tgl_ps"},{data:"age"},{data:"atribut"},{data:"alert"},{data:"score"},{data:"bulan_alert"},{data:"status"},{data:"deskripsi"},{data:"action",render:function(t,e,a){return'<button type="button" class="form-control btn"><i class="nav-icon fas fa-edit"\n      data-toggle="modal" data-target="#modal-lg"></i></button>'}}]),t)).buttons().container().appendTo("#example1_wrapper .col-md-6:eq(0)")}))})();
-//# sourceMappingURL=view_update.js.map
-=======
 /*
  * ATTENTION: An "eval-source-map" devtool has been used.
  * This devtool is neither made for production nor for readable output files.
@@ -34,4 +30,3 @@ eval("function _typeof(obj) { \"@babel/helpers - typeof\"; return _typeof = \"fu
 /******/ 	
 /******/ })()
 ;
->>>>>>> dashboard

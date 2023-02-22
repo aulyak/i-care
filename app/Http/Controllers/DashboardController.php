@@ -15,6 +15,7 @@ class DashboardController extends Controller
 {
   //
   private $QUERY_LIMIT = 10000;
+  private $LIMMIT_ACTIVE = true;
 
   /**
    * Show the application dashboard.
@@ -23,14 +24,11 @@ class DashboardController extends Controller
    */
   public function index(Request $request)
   {
-    // dump('hai');
-    // $data = Summary::get();
     $currentDate = Carbon::now();
     $currentYear = $currentDate->year;
     $currentMonth = str_pad($currentDate->month, 2, '0', STR_PAD_LEFT);
 
     $oldestYearMonth = Summary::orderBy('BULAN', 'ASC')->limit(1)->first(['BULAN'])->BULAN;
-    // dump($oldestYearMonth);
     $oldestYear = (int) substr($oldestYearMonth, 0, 4);
 
     $monthList = [
@@ -65,25 +63,8 @@ class DashboardController extends Controller
     $filteredProporsi = null;
     $filteredDataAlertVh = null;
     $filteredAlert = null;
-    // $modelCollect = collect($data);
-    // $dataSummary = $csvService->readCsv('storage/Summary.csv');
-    // $dataSummary = $modelCollect;
 
-    // $dataProfileLoss = $csvService->readCsv('storage/Profile Loss.csv');
-    // $dataAlert = $csvService->readCsv('storage/Alert.csv');
-    // $filteredSummary = $dataSummary;
-    // $filteredProfileLoss = $dataProfileLoss;
-    // $filteredAlert = $dataAlert;
-
-    // $mappedWitel = $dataSummary->map(function ($row) {
-    //   return $row['witel'];
-    // });
-    // $distinctWitel = $mappedWitel->unique();
     $distinctWitel = Witel::select('WITEL')->groupBy('WITEL')->cursor()->pluck('WITEL');
-    // dump(Witel::select('WITEL')->groupBy('WITEL')->toSql());
-    // dump($distinctWitel);
-    // $distinctWitel = $csvService->getUniqueByRowName($dataSummary, 'WITEL');
-
 
     if ($request->all()) {
       $witel = $request->witel;
@@ -93,8 +74,6 @@ class DashboardController extends Controller
       $filterMonth = str_pad($monthIndex, 2, '0', STR_PAD_LEFT);
       $filterMonthYear = $year . $filterMonth;
       $filterYear = $year;
-
-      // dump($request->all());
 
       $filteredSummary = Summary::when($witel, function ($query) use ($witel) {
         return $query->where('WITEL', $witel);
@@ -125,126 +104,6 @@ class DashboardController extends Controller
       })->when($year && !$month, function ($query) use ($filterYear) {
         return $query->where(DB::raw('substr(BULAN, 1, 4)'), '=', $filterYear);
       });
-
-      /* 
-      if ($witel && $month && $year) {
-        $filteredSummary = $dataSummary->filter(function ($row) use ($witel, $filterMonthYear) {
-          return $row['witel'] === $witel && $row['bulan'] == $filterMonthYear;
-        });
-
-        $filteredProfileLoss = $dataProfileLoss->filter(function ($row) use ($witel, $filterMonthYear) {
-          return $row['witel'] === $witel && $row['bulan'] == $filterMonthYear;
-        });
-
-        $filteredAlert = $dataAlert->filter(function ($row) use ($witel, $filterMonthYear) {
-          return $row['witel'] === $witel && $row['bulan_alert'] == $filterMonthYear;
-        });
-      } else if (!$witel && $month && $year) {
-        $filteredSummary = $dataSummary->filter(function ($row) use ($filterMonthYear) {
-          $monthYearRow = (string) $row['bulan'];
-          $yearRow = substr($monthYearRow, 0, 4);
-          return $row['bulan'] == $filterMonthYear;
-        });
-
-        $filteredProfileLoss = $dataProfileLoss->filter(function ($row) use ($filterMonthYear) {
-          $monthYearRow = (string) $row['bulan'];
-          $yearRow = substr($monthYearRow, 0, 4);
-          return $row['bulan'] == $filterMonthYear;
-        });
-
-        $filteredAlert = $dataAlert->filter(function ($row) use ($filterMonthYear) {
-          return $row['bulan_alert'] == $filterMonthYear;
-        });
-      } else if (!$witel && !$month && $year) {
-        $filteredSummary = $dataSummary->filter(function ($row) use ($year) {
-          $monthYearRow = (string) $row['bulan'];
-          $yearRow = substr($monthYearRow, 0, 4);
-          return $yearRow == $year;
-        });
-
-        $filteredProfileLoss = $dataProfileLoss->filter(function ($row) use ($year) {
-          $monthYearRow = (string) $row['bulan'];
-          $yearRow = substr($monthYearRow, 0, 4);
-          return $yearRow == $year;
-        });
-
-        $filteredAlert = $dataAlert->filter(function ($row) use ($year) {
-          $monthYearRow = (string) $row['bulan_alert'];
-          $yearRow = substr($monthYearRow, 0, 4);
-          return $yearRow == $year;
-        });
-      } else if ($witel && $month && !$year) {
-        $filteredSummary = $dataSummary->filter(function ($row) use ($witel, $filterMonth) {
-          $monthYearRow = (string) $row['bulan'];
-          $monthRow = substr($monthYearRow, -2);
-          return $row['witel'] === $witel && $monthRow == $filterMonth;
-        });
-
-        $filteredProfileLoss = $dataProfileLoss->filter(function ($row) use ($witel, $filterMonth) {
-          $monthYearRow = (string) $row['bulan'];
-          $monthRow = substr($monthYearRow, -2);
-          return $row['witel'] === $witel && $monthRow == $filterMonth;
-        });
-
-        $filteredAlert = $dataAlert->filter(function ($row) use ($witel, $filterMonth) {
-          $monthYearRow = (string) $row['bulan_alert'];
-          $monthRow = substr($monthYearRow, -2);
-          return $row['witel'] === $witel && $monthRow == $filterMonth;
-        });
-      } else if ($witel && !$month && $year) {
-        $filteredSummary = $dataSummary->filter(function ($row) use ($witel, $year) {
-          $monthYearRow = (string) $row['bulan'];
-          $yearRow = substr($monthYearRow, 0, 4);
-          return $row['witel'] === $witel && $yearRow == $year;
-        });
-
-        $filteredProfileLoss = $dataProfileLoss->filter(function ($row) use ($witel, $year) {
-          $monthYearRow = (string) $row['bulan'];
-          $yearRow = substr($monthYearRow, 0, 4);
-          return $row['witel'] === $witel && $yearRow == $year;
-        });
-
-        $filteredAlert = $dataAlert->filter(function ($row) use ($witel, $year) {
-          $monthYearRow = (string) $row['bulan_alert'];
-          $yearRow = substr($monthYearRow, 0, 4);
-          return $row['witel'] === $witel && $yearRow == $year;
-        });
-      } else if ($witel && !$month && !$year) {
-        $filteredSummary = $dataSummary->filter(function ($row) use ($witel) {
-          return $row['witel'] === $witel;
-        });
-
-        $filteredProfileLoss = $dataProfileLoss->filter(function ($row) use ($witel) {
-          return $row['witel'] === $witel;
-        });
-
-        $filteredAlert = $dataAlert->filter(function ($row) use ($witel) {
-          return $row['witel'] === $witel;
-        });
-      } else if (!$witel && $month && !$year) {
-        $filteredSummary = $dataSummary->filter(function ($row) use ($filterMonth) {
-          $monthYearRow = (string) $row['bulan'];
-          $monthRow = substr($monthYearRow, -2);
-          return $monthRow == $filterMonth;
-        });
-
-        $filteredProfileLoss = $dataProfileLoss->filter(function ($row) use ($filterMonth) {
-          $monthYearRow = (string) $row['bulan'];
-          $monthRow = substr($monthYearRow, -2);
-          return $monthRow == $filterMonth;
-        });
-
-        $filteredAlert = $dataAlert->filter(function ($row) use ($filterMonth) {
-          $monthYearRow = (string) $row['bulan_alert'];
-          $monthRow = substr($monthYearRow, -2);
-          return $monthRow == $filterMonth;
-        });
-      } else {
-        $filteredSummary = $dataSummary;
-        $filteredProfileLoss = $dataProfileLoss;
-        $filteredAlert = $dataAlert;
-      } 
-      */
     } else {
       $filteredSummary = Summary::where(DB::raw('substr(BULAN, 1, 4)'), '=', $currentYear);
       $filteredAlert = Alert::where(DB::raw('substr(BULAN_ALERT, 1, 4)'), '=', $currentYear);
@@ -252,30 +111,16 @@ class DashboardController extends Controller
     }
 
     // limit testing
-    $filteredSummary = $filteredSummary->limit($this->QUERY_LIMIT);
-    $filteredProfileLoss = $filteredProfileLoss->limit($this->QUERY_LIMIT);
-    $filteredAlert = $filteredAlert->limit($this->QUERY_LIMIT);
-
-    // dump(
-    //   $filteredSummary->get(),
-    //   $filteredProfileLoss->get()
-    // );
+    if ($this->LIMMIT_ACTIVE) {
+      $filteredSummary = $filteredSummary->limit($this->QUERY_LIMIT);
+      $filteredProfileLoss = $filteredProfileLoss->limit($this->QUERY_LIMIT);
+      $filteredAlert = $filteredAlert->limit($this->QUERY_LIMIT);
+    }
 
     $filteredAlert = $filteredAlert->where('ALERT', 'VERY HIGH ALERT');
     $totalSales = $filteredSummary->sum('TOTAL_SALES');
     $totalLis = $filteredSummary->sum('TOTAL_LIS');
     $totalLoss = $filteredProfileLoss->sum('JUMLAH');
-
-    // dump($filteredSummary->toSql());
-    // dump($filteredAlert->toSql());
-    // dump($filteredProfileLoss->toSql());
-    // dd();
-
-    // dd(
-    //   $totalSales,
-    //   $totalLis,
-    //   $totalLoss,
-    // );
 
     $filteredSummary = $filteredSummary->cursor();
     $filteredProfileLoss = $filteredProfileLoss->cursor();
@@ -284,24 +129,6 @@ class DashboardController extends Controller
     // slowing query alert
     $filteredDataAlertVh = $filteredAlert->cursor();
     $totalVha = $filteredAlert->count();
-    // dump(collect($filteredSummary), collect($filteredProfileLoss), collect($filteredDataAlertVh));
-
-    // $filteredDataAlertVh = $filteredAlert->filter(function ($row) {
-    //   return $row['alert'] === 'VERY HIGH ALERT';
-    // });
-
-    // $totalSales = $filteredSummary->reduce(function ($carry, $item) {
-    //   return $carry + $item['total_sales'];
-    // });
-    // $totalLis = $filteredSummary->reduce(function ($carry, $item) {
-    //   return $carry + $item['total_lis'];
-    // });
-    // $totalLoss = $filteredProfileLoss->reduce(function ($carry, $item) {
-    //   return $carry + $item['jumlah'];
-    // });
-    // $totalVha = $filteredDataAlertVh->reduce(function ($carry) {
-    //   return $carry + 1;
-    // });
 
     return view(
       'dashboard',
