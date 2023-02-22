@@ -1,8 +1,23 @@
 const dt = luxon.DateTime;
 
-function groupByWitel(arr) {
+const monthList = [
+  'Januari',
+  'Februari',
+  'Maret',
+  'April',
+  'Mei',
+  'Juni',
+  'Juli',
+  'Agustus',
+  'September',
+  'Oktober',
+  'November',
+  'Desember',
+];
+
+function groupByWitelOrSTO(arr, isSelectedWitel) {
   const result = [...arr.reduce((r, o) => {
-    const key = o.WITEL;
+    const key = isSelectedWitel ? o.STO : o.WITEL;
 
     const item = r.get(key) || Object.assign({}, o, {
       TOTAL_LIS: 0,
@@ -12,6 +27,68 @@ function groupByWitel(arr) {
 
     return r.set(key, item);
   }, new Map()).values()];
+
+  return result;
+}
+
+function groupProfileLossByYearMonth(arr) {
+  const result = [...arr.reduce((r, o) => {
+    const key = o.BULAN;
+
+    const item = r.get(key) || Object.assign({}, o, {
+      JUMLAH: 0,
+    });
+
+    item.JUMLAH += parseFloat(o.JUMLAH);
+
+    return r.set(key, item);
+  }, new Map()).values()];
+
+  return result;
+}
+
+function groupSummaryByYearMonth(arr) {
+  const result = [...arr.reduce((r, o) => {
+    const key = o.BULAN;
+
+    const item = r.get(key) || Object.assign({}, o, {
+      TOTAL_SALES: 0,
+      TARGET_SALES: 0,
+    });
+
+    item.TOTAL_SALES += parseFloat(o.TOTAL_SALES) || 0;
+    item.TARGET_SALES += parseFloat(o.TARGET_SALES) || 0;
+
+    return r.set(key, item);
+  }, new Map()).values()];
+
+  return result;
+}
+
+function transformArray(array) {
+  const arr = array.map(item => {
+    for (const key in item) {
+      if (Object.hasOwnProperty.call(item, key)) {
+        if (key === 'BULAN') delete item[key];
+      }
+    }
+    return item;
+  });
+  const result = [];
+  const labels = new Set(); // set to keep track of unique labels
+
+  // iterate through each object to collect all unique labels
+  arr.forEach(obj => {
+    Object.keys(obj).forEach(key => {
+      labels.add(key);
+    });
+  });
+
+  // create a new object for each label and its corresponding data
+  labels.forEach(label => {
+    const data = arr.map(obj => obj[label] || 0); // map values to an array
+    result.push({label, data, type: 'bar', yAxisID: 'y1'});
+  });
 
   return result;
 }
@@ -38,31 +115,74 @@ $(document).ready(async function() {
   const filteredAlert = $('#summary').data('filtered-profile-loss');
   const dataTotal = $('#summary').data('total');
 
-  console.log({filteredProporsi, filteredProfileLoss, filteredAlert});
+  const witel = $('select[name="witel"');
+  const isSelectedWitel = $(witel).val() !== '';
 
   const filteredProporsiFlat = filteredProporsi ? Object.values(filteredProporsi) : '';
   const filteredProfileLossFlat = filteredProfileLoss ? Object.values(filteredProfileLoss) : '';
   const filteredAlertFlat = filteredAlert ? Object.values(filteredAlert) : '';
-  console.log({filteredProporsiFlat, filteredProfileLossFlat, filteredAlertFlat});
-  const groupedSummary = groupByWitel(filteredProporsiFlat);
-  console.log({groupedSummary});
-  const groupedLoss = groupByWitel(filteredProfileLossFlat);
-  const groupedAlert = groupByWitel(filteredAlertFlat);
+  const groupedSummary = groupByWitelOrSTO(filteredProporsiFlat, isSelectedWitel);
   const sumTotalLis = groupedSummary.reduce((adder, item) => adder + item.TOTAL_LIS, 0);
   const groupedPercentage = groupedSummary.map(item => ({...item, percentage: item.TOTAL_LIS / sumTotalLis * 100}));
+  const groupedProfileLossByYearMonth = groupProfileLossByYearMonth(filteredProfileLoss);
+  const groupedSummaryByYearMonth = groupSummaryByYearMonth(filteredProporsi);
+  const mergedTrendDataBars = groupedSummaryByYearMonth.map(item => {
+    const findSameYearMonth = groupedProfileLossByYearMonth.find(profile => profile.BULAN === item.BULAN);
+
+    let totalLoss = 0;
+    if (findSameYearMonth) {
+      totalLoss = findSameYearMonth.JUMLAH;
+    }
+    item['TOTAL_LOSS'] = totalLoss;
+
+    return {
+      'BULAN': item.BULAN,
+      'TOTAL LOSS': item.TOTAL_LOSS,
+      'TOTAL SALES': item.TOTAL_SALES,
+      'TARGET SALES': item.TARGET_SALES,
+    };
+  });
+
+  const mergedTrendDataLine = mergedTrendDataBars.map(item => {
+    return {
+      'BULAN': item.BULAN,
+      'LOSS_TO_SALES': (parseFloat(item['TOTAL LOSS']) / parseFloat(item['TOTAL SALES'])) * 100,
+    };
+  });
 
   const canvasSummary = document.getElementById('summary');
   const ctxSummary = canvasSummary.getContext('2d');
   const canvasProporsi = document.getElementById('proporsi');
   const ctxProporsi = canvasProporsi.getContext('2d');
+  const canvasTrend = document.getElementById('trend');
+  const ctxTrend = canvasTrend.getContext('2d');
 
   const labelsSummary = Object.keys(dataTotal);
   const dataSummaryRaw = Object.values(dataTotal);
+  const labelsTrendMonth = mergedTrendDataBars.map(item => {
+    const monthNum = parseInt(item.BULAN.substr(item.BULAN.length - 2, 2));
+    return monthList[monthNum - 1];
+  });
 
   const dataSetSummary = [];
   for (let i = 0; i < labelsSummary.length; i++) {
     dataSetSummary.push({x: labelsSummary[i], y: dataSummaryRaw[i]});
   }
+
+  const dataLossToSales = mergedTrendDataLine.map(item => item.LOSS_TO_SALES);
+
+  const dataSetTrend = transformArray(mergedTrendDataBars);
+  dataSetTrend.push({
+    type: 'line',
+    label: 'LOSS TO SALES',
+    data: dataLossToSales,
+    yAxisID: 'y'
+  });
+
+  const dataTrend = {
+    labels: labelsTrendMonth,
+    datasets: dataSetTrend
+  };
 
   const dataSummary = {
     datasets: [{
@@ -71,18 +191,14 @@ $(document).ready(async function() {
     }]
   };
 
-  console.log({groupedPercentage});
-
   const dataProporsi = {
-    labels: groupedSummary.map(item => item.WITEL),
+    labels: groupedSummary.map(item => isSelectedWitel ? item.STO : item.WITEL),
     datasets: [{
       label: 'Total LIS',
       data: groupedPercentage.map(item => item.percentage.toFixed(2)),
-      backgroundColor: groupedSummary.map(item => '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0'))
+      backgroundColor: groupedSummary.map(item => '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')),
     }]
   };
-
-  console.log({dataProporsi});
 
   const areaChartData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -119,19 +235,6 @@ $(document).ready(async function() {
       display: true
     },
   };
-
-  const lineChartCanvas = $('#tren').get(0).getContext('2d');
-  const lineChartOptions = $.extend(true, {}, areaChartOptions);
-  const lineChartData = $.extend(true, {}, areaChartData);
-  lineChartData.datasets[0].fill = false;
-  lineChartData.datasets[1].fill = false;
-  lineChartOptions.datasetFill = false;
-
-  const lineChart = new Chart(lineChartCanvas, {
-    type: 'line',
-    data: lineChartData,
-    options: lineChartOptions
-  });
 
   const summaryChart = new Chart(ctxSummary, {
     type: 'bar',
@@ -170,11 +273,39 @@ $(document).ready(async function() {
           }
         },
         legend: {
+          display: false,
           position: 'top',
         },
         title: {
-          display: true,
+          display: false,
           text: 'Proporsi LIS'
+        }
+      }
+    },
+  });
+
+  const trendChart = new Chart(ctxTrend, {
+    data: dataTrend,
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          display: true,
+          position: 'right'
+        },
+        y1: {
+          display: true,
+          position: 'left'
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+          display: true,
+        },
+        title: {
+          display: true,
+          text: 'Summary LIS, Sales & Churn'
         }
       }
     },
