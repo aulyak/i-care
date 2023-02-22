@@ -144,7 +144,8 @@
           </div>
           <div class="card-body">
             <div class="chart">
-              <canvas id="ctoPerWitelBarChartCanvas" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              <!-- <canvas id="ctoPerWitelBarChartCanvas" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas> -->
+              {!! $data['CHART']['CT0_PER_WITEL']->render() !!}
             </div>
           </div>
           <!-- /.card-body -->
@@ -191,7 +192,8 @@
                 <h3 class="card-title">CT0 PER SEGMENT</h3>
               </div>
               <div class="card-body" style="padding-top:20%">
-                <canvas id="ctoPieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                <!-- <canvas id="ctoPieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas> -->
+                {!! $data['CHART']['CT0_PER_SEGMEN']->render() !!}
               </div>
               <!-- /.card-body -->
             </div>
