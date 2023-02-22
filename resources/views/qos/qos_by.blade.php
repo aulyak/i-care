@@ -1,9 +1,5 @@
 @extends('adminlte::page')
 
-@php
-
-@endphp
-
 @section('content_header')
 <div class="content-header">
   <div class="container-fluid">
@@ -12,7 +8,7 @@
       </div><!-- /.col -->
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item">Quality Of Sales / <a href="#">Sales by Month</a></li>
+          <li class="breadcrumb-item">Quality Of Sales / <a href="#">Sales by {{ $pageType }}</a></li>
           <!-- <li class="breadcrumb-item active">Dashboard v1</li> -->
         </ol>
       </div><!-- /.col -->
@@ -23,70 +19,24 @@
       <div class="card-header">
         <form>
           <div class="row">
-            <div class="col-sm-6 col-md-2">
-              <!-- select -->
-              <div class="form-group">
-                <label>Witel</label>
-                <select class="form-control">
-                  <option>(ALL)</option>
-                  <option>option 2</option>
-                  <option>option 3</option>
-                  <option>option 4</option>
-                  <option>option 5</option>
-                </select>
-              </div>
-            </div>
+            @foreach ($options as $option)
             <div class="col-sm-6 col-md-2">
               <div class="form-group">
-                <label>STO</label>
-                <select class="form-control">
-                  <option>(ALL)</option>
-                  <option>option 2</option>
-                  <option>option 3</option>
-                  <option>option 4</option>
-                  <option>option 5</option>
+                <label>{{$option['LABEL']}}</label>
+                <select name="{{$option['KEY']}}" class="form-control">
+                  @foreach ($option['DATA'] as $DATA )
+                  @if ($option['VALUE'] == $DATA)
+                  <option selected="selected" value="{{$DATA}}">{{$DATA}}</option>
+                  @else
+                  <option value="{{$DATA}}">{{$DATA}}</option>
+                  @endif
+                  @endforeach
                 </select>
               </div>
             </div>
-            <div class="col-sm-6 col-md-2">
-              <!-- select -->
-              <div class="form-group">
-                <label>Product</label>
-                <select class="form-control">
-                  <option>(ALL)</option>
-                  <option>option 2</option>
-                  <option>option 3</option>
-                  <option>option 4</option>
-                  <option>option 5</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-sm-6 col-md-2">
-              <div class="form-group">
-                <label>Ccat</label>
-                <select class="form-control">
-                  <option>(ALL)</option>
-                  <option>option 2</option>
-                  <option>option 3</option>
-                  <option>option 4</option>
-                  <option>option 5</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-sm-12 col-md-4">
-              <!-- select -->
-              <div class="form-group">
-                <label>Kwadran Inet</label>
-                <select class="form-control">
-                  <option>(ALL)</option>
-                  <option>option 2</option>
-                  <option>option 3</option>
-                  <option>option 4</option>
-                  <option>option 5</option>
-                </select>
-              </div>
-            </div>
+            @endforeach
           </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
           <!-- input states -->
         </form>
       </div>
@@ -133,7 +83,7 @@
               <tbody>
                 @foreach ($result as $res)
                 <tr>
-                  <td>{{ ($res['BULAN_SALES'] ?? '-') }}</td>
+                  <td>{{ ($res['GROUP'] ?? '-') }}</td>
                   @foreach ($agingQuery as $aq)
                   @if ($aq < count($res['AGING_PERCENTAGE'])) <td style="background-color: green;">{{ (round($res['AGING_PERCENTAGE'][$aq],2)*100 . '%' ?? '') }}</td>
                     @else
