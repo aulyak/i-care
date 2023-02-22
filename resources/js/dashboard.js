@@ -69,7 +69,7 @@ function transformArray(array) {
   const arr = array.map(item => {
     for (const key in item) {
       if (Object.hasOwnProperty.call(item, key)) {
-        if (key === 'BULAN') delete item[key]
+        if (key === 'BULAN') delete item[key];
       }
     }
     return item;
@@ -87,7 +87,7 @@ function transformArray(array) {
   // create a new object for each label and its corresponding data
   labels.forEach(label => {
     const data = arr.map(obj => obj[label] || 0); // map values to an array
-    result.push({ label, data, type: 'bar', yAxisID: 'bar'});
+    result.push({label, data, type: 'bar', yAxisID: 'bar'});
   });
 
   return result;
@@ -138,7 +138,7 @@ $(document).ready(async function() {
 
     let totalLoss = 0;
     if (findSameYearMonth) {
-      totalLoss = findSameYearMonth.JUMLAH
+      totalLoss = findSameYearMonth.JUMLAH;
     }
     item['TOTAL_LOSS'] = totalLoss;
 
@@ -156,7 +156,7 @@ $(document).ready(async function() {
     return {
       'BULAN': item.BULAN,
       'LOSS_TO_SALES': parseFloat(item.TOTAL_LOSS) / parseFloat(item.TOTAL_LOSS) * 100,
-    }
+    };
   });
   console.log({groupedProfileLossByYearMonth, groupedSummaryByYearMonth, mergedTrendDataBars, mergedTrendDataLine});
 
@@ -170,7 +170,7 @@ $(document).ready(async function() {
   const labelsSummary = Object.keys(dataTotal);
   const dataSummaryRaw = Object.values(dataTotal);
   const labelsTrendMonth = mergedTrendDataBars.map(item => {
-    const monthNum = parseInt(item.BULAN.substr(item.BULAN.length-2, 2));
+    const monthNum = parseInt(item.BULAN.substr(item.BULAN.length - 2, 2));
     return monthList[monthNum - 1];
   });
   console.log({labelsTrendMonth});
@@ -179,12 +179,13 @@ $(document).ready(async function() {
   for (let i = 0; i < labelsSummary.length; i++) {
     dataSetSummary.push({x: labelsSummary[i], y: dataSummaryRaw[i]});
   }
-  
+
   const dataSetTrend = transformArray(mergedTrendDataBars);
   dataSetTrend.push({
     type: 'line',
     label: 'Line Dataset',
     data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    yAxisID: 'line'
   });
 
   console.log({dataSetTrend});
@@ -192,7 +193,7 @@ $(document).ready(async function() {
   const dataTrend = {
     labels: labelsTrendMonth,
     datasets: dataSetTrend
-  }
+  };
 
   console.log({dataTrend});
 
@@ -309,6 +310,16 @@ $(document).ready(async function() {
         // y: {
         //   beginAtZero: true,
         // },
+        line: {
+          type: 'linear',
+          display: true,
+          position: 'left'
+        },
+        bar: {
+          type: 'bar',
+          display: true,
+          position: 'right'
+        }
         // yAxes: [{
         //   id: 'A',
         //   type: 'linear',
