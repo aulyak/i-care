@@ -261,13 +261,23 @@ class ProfileHelperService
       $tbl['HEAD'] = $mtable['HEAD'];
       $tbl['ROW'] = $mtable['ROW'];
     } elseif ($key == 'ARPU_X_SPEED') {
+      $mtable = $this->chs->buildTableData('KAT_ARPU', 'SPEED');
+      $tbl['HEAD'] = $mtable['HEAD'];
+      $tbl['ROW'] = $mtable['ROW'];
+    } elseif ($key == 'CT0_PER_UMUR_CT0') {
       $mtable = $this->chs->buildTableData(array(
-        ['title' => 'ARPU'],
-        ['title' => '< 300K', 'whereRaw' => 'SPEED < 30000'],
-        ['title' => '300K-500K', 'whereRaw' => 'SPEED >= 30000 AND SPEED < 500000'],
-        ['title' => '500K-700K', 'whereRaw' => 'SPEED >= 500000 AND SPEED < 700000'],
-        ['title' => '>= 700K', 'whereRaw' => 'SPEED >= 70000'],
-      ), 'SPEED');
+        ['title' => 'LAMA_CT0'],
+        ['title' => 'NEW CT0', 'whereRaw' => 'LAMA_CT0 = 0'],
+        ['title' => '1-3 Bulan', 'whereRaw' => 'LAMA_CT0 >= 1 AND LAMA_CT0 < 3'],
+        ['title' => '4-6 Bulan', 'whereRaw' => 'LAMA_CT0 >= 4 AND LAMA_CT0 < 6'],
+        ['title' => '7-12 Bulan', 'whereRaw' => 'LAMA_CT0 >= 7 AND LAMA_CT0 < 13'],
+        ['title' => '13-24 Bulan', 'whereRaw' => 'LAMA_CT0 >= 13 AND LAMA_CT0 < 24'],
+        ['title' => '> 24 Bulan', 'whereRaw' => 'LAMA_CT0 >= 24'],
+      ), 'WITEL');
+      $tbl['HEAD'] = $mtable['HEAD'];
+      $tbl['ROW'] = $mtable['ROW'];
+    } elseif ($key == 'DETAIL_PER_WITEL') {
+      $mtable = $this->chs->buildTableData('KET_CT0', 'WITEL');
       $tbl['HEAD'] = $mtable['HEAD'];
       $tbl['ROW'] = $mtable['ROW'];
     }

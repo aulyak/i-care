@@ -158,54 +158,26 @@
           <div class="col-sm-12 col-md-4">
             <div class="card" style="height: 29.70rem;">
               <div class="card-header">
-                <h3 class="card-title">CT0 PER UMUR CT0</h3>
+                <h3 class="card-title">{{ $data['TABLE']['CT0_PER_UMUR_CT0']['TITLE'] }}</h3>
               </div>
               <!-- /.card-header -->
-              <div class="card-body" style="padding-top:20%">
-                <table id="example2" class="table table-bordered table-striped">
+              <div class="card-body">
+                <table id="TBL_CT0_PER_UMUR_CT0" class="table table-bordered table-striped">
                   <thead>
                     <tr>
-                      <th></th>
-                      <th>NEW CT0</th>
-                      <th>1-3 BULAN</th>
-                      <th>4-6 BULAN</th>
-                      <th>7-12 BULAN</th>
-                      <th>13-14 BULAN</th>
-                      <th>> 24 BULAN</th>
-                      <th>GRAND TOTAL</th>
+                      @foreach ($data['TABLE']['CT0_PER_UMUR_CT0']['HEAD'] as $head )
+                      <th>{{ $head }}</th>
+                      @endforeach
                     </tr>
                   </thead>
                   <tbody>
+                    @foreach ($data['TABLE']['CT0_PER_UMUR_CT0']['ROW'] as $rows )
                     <tr>
-                      <td>BANTEN</td>
-                      <td style="background-color: #e88771;">1,556</td>
-                      <td style="background-color: #e88771;">2,465</td>
-                      <td style="background-color: #e88771;">3,577</td>
-                      <td style="background-color: #83b870;">868</td>
-                      <td style="background-color: #83b870;">578</td>
-                      <td style="background-color: #83b870;">176</td>
-                      <td style="background-color: #d24c49;">9,220</td>
+                      @foreach ($rows as $row)
+                      <td>{{$row}}</td>
+                      @endforeach
                     </tr>
-                    <tr>
-                      <td>BEKASI</td>
-                      <td style="background-color: #e88771;">2,927</td>
-                      <td style="background-color: #e88771;">4,184</td>
-                      <td style="background-color: #e88771;">6,356</td>
-                      <td style="background-color: #e88771;">1,225</td>
-                      <td style="background-color: #e88771;">1,086</td>
-                      <td style="background-color: #83b870;">385</td>
-                      <td style="background-color: #9f263c;">16,163</td>
-                    </tr>
-                    <tr>
-                      <td>BOGOR</td>
-                      <td style="background-color: #e88771;">4,129</td>
-                      <td style="background-color: #e88771;">3,784</td>
-                      <td style="background-color: #e88771;">5,248</td>
-                      <td style="background-color: #e88771;">1,460</td>
-                      <td style="background-color: #e88771;">1,738</td>
-                      <td style="background-color: #83b870;">728</td>
-                      <td style="background-color: #9f263c;">17,087</td>
-                    </tr>
+                    @endforeach
                   </tbody>
                 </table>
               </div>
@@ -228,77 +200,27 @@
           <div class="col-sm-12 col-md-4" style="width: 100%;">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">DETAIL PER WITEL</h3>
+                <h3 class="card-title">{{ $data['TABLE']['DETAIL_PER_WITEL']['TITLE'] }}</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <table id="arpuxSpeed" class="table table-bordered table-striped">
+                <table id="TBL_DETAIL_PER_WITEL" class="table table-bordered table-striped">
                   <thead>
                     <tr>
-                      <th>WITEL</th>
-                      <th>ABON NOL</th>
-                      <th>BACKDATE</th>
-                      <th>CABUT</th>
-                      <th>CAPS</th>
-                      <th>CT0</th>
-                      <th>CT0 NDE</th>
-                      <th>DUNNING</th>
-                      <th>HOMEWIFI</th>
-                      <th>GRAND TOTAL</th>
+                      @foreach ($data['TABLE']['DETAIL_PER_WITEL']['HEAD'] as $head )
+                      <th>{{ $head }}</th>
+                      @endforeach
                     </tr>
                   </thead>
                   <tbody>
+                    @foreach ($data['TABLE']['DETAIL_PER_WITEL']['ROW'] as $rows )
                     <tr>
-                      <td>BANTEN</td>
-                      <td style="background-color: #83b870;">379</td>
-                      <td></td>
-                      <td style="background-color: #83b870;">285</td>
-                      <td style="background-color: #83b870;">691</td>
-                      <td style="background-color: #d14c49;">7,865</td>
-                      <td></td>
-                      <td style="background-color: #83b870;">89</td>
-                      <td style="background-color: #e88771;">1,900</td>
-                      <td style="background-color: #d14c49;">11,209</td>
+                      @foreach ($rows as $row)
+                      <td>{{$row}}</td>
+                      @endforeach
                     </tr>
-                    <tr>
-                      <td>BEKASI</td>
-                      <td style="background-color: #83b870;">789</td>
-                      <td></td>
-                      <td style="background-color: #83b870;">744</td>
-                      <td style="background-color: #e88771;">1,308</td>
-                      <td style="background-color: #d14c49;">13,322</td>
-                      <td></td>
-                      <td style="background-color: #e88771;">1,739</td>
-                      <td style="background-color: #d14c49;">13,138</td>
-                      <td style="background-color: #d14c49;">31,040</td>
-                    </tr>
-                    <tr>
-                      <td>BOGOR</td>
-                      <td style="background-color: #83b870;">805</td>
-                      <td></td>
-                      <td style="background-color: #e88771;">1,479</td>
-                      <td style="background-color: #e88771;">1,521</td>
-                      <td style="background-color: #d14c49;">13,271</td>
-                      <td style="background-color: #83b870;">11</td>
-                      <td style="background-color: #83b870;">700</td>
-                      <td style="background-color: #e88771;">7,675</td>
-                      <td style="background-color: #d14c49;">25,462</td>
-                    </tr>
+                    @endforeach
                   </tbody>
-                  <tfoot>
-                    <tr style="font-weight: bold;">
-                      <td>GRAND TOTAL</td>
-                      <td style="background-color: #83b870;">805</td>
-                      <td></td>
-                      <td style="background-color: #e88771;">1,479</td>
-                      <td style="background-color: #e88771;">1,521</td>
-                      <td style="background-color: #d14c49;">13,271</td>
-                      <td style="background-color: #83b870;">11</td>
-                      <td style="background-color: #83b870;">700</td>
-                      <td style="background-color: #e88771;">7,675</td>
-                      <td style="background-color: #d14c49;">25,462</td>
-                    </tr>
-                  </tfoot>
                 </table>
               </div>
               <!-- /.card-body -->
@@ -327,5 +249,24 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.13.1/b-2.3.3/b-colvis-2.3.3/b-html5-2.3.3/b-print-2.3.3/r-2.4.0/sc-2.0.7/datatables.min.js">
 </script>
 <script src="js/app.js"></script>
-<script src="js/leveraging.js"></script>
+<script>
+  $(function() {
+    const defaultVar = {
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": true,
+      "scrollX": true,
+    }
+    $('#TBL_CT0_PER_UMUR_CT0').DataTable({
+      ...defaultVar,
+      "pageLength": 5
+    });
+    $('#TBL_DETAIL_PER_WITEL').DataTable({
+      ...defaultVar,
+      "pageLength": 5
+    });
+  });
+</script>
 @stop

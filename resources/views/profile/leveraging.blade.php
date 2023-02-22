@@ -271,7 +271,6 @@
 <script>
   $(function() {
     const defaultVar = {
-      "paging": false,
       "lengthChange": false,
       "searching": false,
       "ordering": true,
@@ -281,6 +280,7 @@
     }
     $('#TBL_PROUCT_TYPE_BY_WITEL').DataTable({
       ...defaultVar,
+      "pageLength": 3
     });
     $('#TBL_ARPU_X_SPEED').DataTable({
       ...defaultVar,
