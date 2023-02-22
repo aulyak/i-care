@@ -133,6 +133,28 @@ class CommonHelperService
         }
         return $res;
     }
+    public function buildStackChartData($column, $stacked)
+    {
+        $res = array();
+        $res['LABEL'] = $this->getDistinct($column, true);
+        $res['DATA'] = array();
+        $data = Cache::remember($this->model . '_CHART_' . $column . $stacked . 'COUNT_' . $this->hasQuery(), $this->cacheTime, function () use ($column, $stacked) {
+            $query = $this->model::select($column, $stacked, DB::raw('count(*) as dt'));
+            $this->proceedFilter($query);
+            return $query->groupBy($column)->groupBy($stacked)->get()->toArray();
+        });
+        foreach ($res['LABEL'] as $stack) {
+            $dtstd = array();
+            foreach ($data as $std) {
+                if ($std[$column] == $stack) array_push($dtstd, $std['dt']);
+            }
+            array_push($res['DATA'], [
+                'label' => $stack,
+                'data' => $dtstd
+            ]);
+        }
+        return $res;
+    }
 
     public function buildOptions($options)
     {

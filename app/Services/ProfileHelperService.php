@@ -113,17 +113,13 @@ class ProfileHelperService
         ])
         ->options($defaultOptions);
     } elseif ($key == 'USAGE') {
+      $chartData = $this->chs->buildStackChartData('USAGE', 'PRODUCT2');
       return app()->chartjs
         ->name($key)
         ->type('bar')
         ->size(['width' => 400, 'height' => 200])
-        ->labels(['< 200GB', '200-350GB', '350-750GB', '>=750GB'])
-        ->datasets([
-          ['data' => $this->buildDummyData(4, 120000, false)],
-          ['data' => $this->buildDummyData(4, 120000, false)],
-          ['data' => $this->buildDummyData(4, 120000, false)],
-          ['data' => $this->buildDummyData(4, 120000, false)]
-        ])
+        ->labels($chartData['LABEL'])
+        ->datasets($chartData['DATA'])
         ->options(array_merge(
           $defaultOptions,
           $defaultNoGrid,
@@ -135,17 +131,13 @@ class ProfileHelperService
           ]
         ));
     } elseif ($key == 'FUP') {
+      $chartData = $this->chs->buildStackChartData('FUP', 'PRODUCT2');
       return app()->chartjs
         ->name($key)
         ->type('bar')
         ->size(['width' => 400, 'height' => 200])
-        ->labels(['< FUP', '> FUP', 'NO FUP < 10MBPS'])
-        ->datasets([
-          ['data' => $this->buildDummyData(3, 120000, false)],
-          ['data' => $this->buildDummyData(3, 120000, false)],
-          ['data' => $this->buildDummyData(3, 120000, false)],
-          ['data' => $this->buildDummyData(3, 120000, false)]
-        ])
+        ->labels($chartData['LABEL'])
+        ->datasets($chartData['DATA'])
         ->options(array_merge(
           $defaultOptions,
           $defaultNoGrid,
@@ -207,6 +199,37 @@ class ProfileHelperService
         ]));
     } elseif ($key == 'PROPORSI_CT0') {
       $chartData = $this->chs->buildChartData('KET_CT0', true);
+      return app()->chartjs
+        ->name($key)
+        ->type('pie')
+        ->size(['width' => 400, 'height' => 200])
+        ->labels($chartData['LABEL'])
+        ->datasets([
+          [
+            'data' => $chartData['DATA'],
+          ]
+        ])
+        ->options($defaultOptions);
+    } elseif ($key == 'CT0_PER_WITEL') {
+      $chartData = $this->chs->buildStackChartData('WITEL', 'KET_CT0');
+      return app()->chartjs
+        ->name($key)
+        ->type('bar')
+        ->size(['width' => 400, 'height' => 200])
+        ->labels($chartData['LABEL'])
+        ->datasets($chartData['DATA'])
+        ->options(array_merge(
+          $defaultOptions,
+          $defaultNoGrid,
+          $defaultNoLegend,
+          [
+            'x' => ['stacked' => true],
+            'y' => ['stacked' => true],
+            'indexAxis' => 'y'
+          ]
+        ));
+    } elseif ($key == 'CT0_PER_SEGMEN') {
+      $chartData = $this->chs->buildChartData('SEGMENT', true);
       return app()->chartjs
         ->name($key)
         ->type('pie')
