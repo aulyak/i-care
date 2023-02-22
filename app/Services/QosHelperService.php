@@ -50,18 +50,23 @@ class QosHelperService
     {
         $result = array();
         $groups = $this->chs->getDistinct($groupKey);
+        $queryresult = Cache::remember(
+            'QHS_AGING_COUNT_' . $groupKey . $this->chs->hasQuery(),
+            now()->addMinutes(120),
+            function () use ($groupKey) {
+                $query = $this->chs->getModel()::select($groupKey, 'AGING', DB::raw('count(*) as total_aging'));
+                $this->chs->proceedFilter($query);
+                return $query->groupBy($groupKey)->groupBy('AGING')->get()->toArray();
+            }
+        );
         foreach ($groups as $group) {
             $groupData = $group[$groupKey];
             if ($this->isValidGroupData($groupData, $groupKey)) {
                 $rawdata['GROUP'] = $groupData;
-                $rawdata['AGING_COUNT'] = Cache::remember('QHS_AGING_COUNT_' . $rawdata['GROUP'] . $this->chs->hasQuery(), now()->addMinutes(120), function () use ($groupData, $groupKey) {
-                    $query = QOS::select(DB::raw('count(*) as total_aging'))
-                        ->where($groupKey, '=', $groupData);
-                    $this->chs->proceedFilter($query);
-                    return $query
-                        ->groupBy('AGING')
-                        ->pluck('total_aging')->toArray();
-                });
+                $rawdata['AGING_COUNT'] = array();
+                foreach ($queryresult as $qs) {
+                    if ($qs[$groupKey] == $rawdata['GROUP']) array_push($rawdata['AGING_COUNT'], $qs['total_aging']);
+                }
                 $rawdata['AGING_PERCENTAGE'] = array();
                 for ($y = 1; $y <= count($rawdata['AGING_COUNT']); $y++) {
                     $agingPercentage = ($rawdata['AGING_COUNT'][$y - 1] / $rawdata['AGING_COUNT'][0]);
@@ -70,6 +75,7 @@ class QosHelperService
                 array_push($result, $rawdata);
             }
         }
+        // dd($result);
         return $result;
     }
 }
