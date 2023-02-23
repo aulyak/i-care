@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\ProcessData;
+use App\Models\Witel;
 use Illuminate\Http\Request;
 use App\Services\CsvService;
 use Carbon\Carbon;
@@ -15,6 +16,7 @@ class AlertController extends Controller
   {
     // $this->alertData = $csvService->readCsv('storage/Alert.csv');
     // $this->distinctWitel = $csvService->getUniqueByRowName($this->alertData, 'witel');
+    $this->distinctWitel = Witel::select('WITEL')->groupBy('WITEL')->get()->pluck('WITEL');
     // $this->distinctSto = $csvService->getUniqueByRowName($this->alertData, 'sto');
     // $this->distinctBulanAlert = $csvService->getUniqueByRowName($this->alertData, 'bulan_alert');
     // $this->distinctStatus = $csvService->getUniqueByRowName($this->alertData, 'status');
