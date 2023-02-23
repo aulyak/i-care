@@ -39,7 +39,7 @@
               </div>
             </div>
             @endforeach
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary" style="height:100%; margin-top:2rem; margin-left:.5rem">Submit</button>
           </div>
           <!-- input states -->
         </form>
@@ -123,7 +123,7 @@
           </div>
           <div class="col-sm-12 col-md-5">
             <!-- PIE CHART -->
-            <div class="card">
+            <div class="card" style="height:24rem">
               <div class="card-header" style="text-align: center;">
                 <h3 class="card-title">Proporsi CT0</h3>
               </div>
@@ -138,11 +138,11 @@
         </div>
       </div>
       <div class="col-sm-12 col-md-4" style="width: 100%;">
-        <div class="card" style="height: 24.5rem;">
+        <div class="card" style="height: 27.4rem;">
           <div class="card-header" style="text-align: center;">
             <h3 class="card-title">CT0 PER WITEL</h3>
           </div>
-          <div class="card-body">
+          <div class="card-body" style="height:100%; padding-top:20%;">
             <div class="chart">
               <!-- <canvas id="ctoPerWitelBarChartCanvas" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas> -->
               {!! $data['CHART']['CT0_PER_WITEL']->render() !!}
@@ -200,7 +200,7 @@
             <!-- /.card -->
           </div>
           <div class="col-sm-12 col-md-4" style="width: 100%;">
-            <div class="card">
+            <div class="card" style="height:29.70rem">
               <div class="card-header">
                 <h3 class="card-title">{{ $data['TABLE']['DETAIL_PER_WITEL']['TITLE'] }}</h3>
               </div>

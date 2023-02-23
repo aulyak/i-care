@@ -22,7 +22,7 @@
             @foreach ($data['OPTIONS'] as $OPTION )
             <div class="col-sm-4 col-md-{{ (strlen($OPTION['LABEL']) < 9 ? '1':'2')}}">
               <div class="form-group">
-                <label>{{$OPTION['LABEL']}}</label>
+                <label style="white-space:nowrap">{{$OPTION['LABEL']}}</label>
                 <select name="{{$OPTION['KEY']}}" class="form-control">
                   @foreach ($OPTION['DATA'] as $DATA )
                   @if ($OPTION['VALUE'] == $DATA)
@@ -220,7 +220,7 @@
         </div>
       </div>
       <div class="col-sm-12 col-md-4" style="width: 100%;">
-        <div class="card" style="height: 43rem;">
+        <div class="card" style="height: 36.7rem;">
           <div class="card-header">
             <h3 class="card-title">{{ $data['TABLE']['ARPU_X_SPEED']['TITLE'] }}</h3>
           </div>
@@ -284,7 +284,7 @@
     });
     $('#TBL_ARPU_X_SPEED').DataTable({
       ...defaultVar,
-      "pageLength": 10
+      "pageLength": 8
     });
   });
 </script>
