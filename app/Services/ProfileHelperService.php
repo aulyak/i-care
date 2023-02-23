@@ -24,15 +24,6 @@ class ProfileHelperService
     return ucwords(str_replace('_', ' ', strtolower($key)));
   }
 
-  private function buildDummyData($count, $maxrand = 60000, $formatted = true)
-  {
-    $dummyData = array();
-    for ($i = 0; $i < $count; $i++) {
-      array_push($dummyData, $this->chs->transformNumber(null, $maxrand, $formatted));
-    }
-    return $dummyData;
-  }
-
   public function buildOption($options)
   {
     return $this->chs->buildOptions($options);
@@ -41,19 +32,41 @@ class ProfileHelperService
   public function buildOverview($options)
   {
     $data = null;
+    if ($this->model == "ProfileLeveraging") {
+      $overviewCol = 'PRODUCT2';
+    }
+    if ($this->model == "ProfileRetention") {
+      $overviewCol = 'KET_CT0';
+    }
+    $res = Cache::remember(
+      $this->model . '_PHS_OVERVIEW_' . 'COUNT_' . $this->chs->hasQuery(),
+      now()->addMinutes($this->chs->cacheTime),
+      function () use ($overviewCol) {
+        $query = $this->chs->model::select($overviewCol, DB::raw('count(*) as dt'))->groupBy($overviewCol);
+        $this->chs->proceedFilter($query);
+        return $query->get()->toArray();
+      }
+    );
+
     foreach ($options as $option) {
-      $res = Cache::remember($this->model . '_PHS_OVERVIEW_' . $option . 'COUNT_' . $this->chs->hasQuery(), $this->chs->cacheTime, function () use ($option) {
-        $query = $this->chs->model::select(DB::raw('count(*) as dt'));
+      $data[$option] = 0;
+      foreach ($res as $r) {
         if ($this->model == "ProfileLeveraging" & $option != 'ALL_DATA') {
-          $query->where('PRODUCT2', $option);
+          if ($option == $r[$overviewCol]) $data[$option] = $r['dt'];
+        }
+        if ($this->model == "ProfileLeveraging" & $option == 'ALL_DATA') {
+          $data['ALL_DATA'] += $r['dt'];
         }
         if ($this->model == "ProfileRetention" & $option != 'TOTAL_CT0') {
-          $query->where('KET_CT0', $option);
+          if ($option == $r[$overviewCol]) $data[$option] = $r['dt'];
         }
-        $this->chs->proceedFilter($query);
-        return $query->pluck('dt')[0];
-      });
-      $data[$option] = $this->chs->transformNumber($res);
+        if ($this->model == "ProfileRetention" & $option == 'TOTAL_CT0') {
+          $data['TOTAL_CT0'] += $r['dt'];
+        }
+      }
+    }
+    foreach ($data as &$dt) {
+      $dt = $this->chs->transformNumber($dt);
     }
     return $data;
   }

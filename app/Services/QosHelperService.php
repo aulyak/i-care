@@ -52,7 +52,7 @@ class QosHelperService
         $groups = $this->chs->getDistinct($groupKey);
         $queryresult = Cache::remember(
             'QHS_AGING_COUNT_' . $groupKey . $this->chs->hasQuery(),
-            now()->addMinutes(120),
+            now()->addMinutes($this->chs->cacheTime),
             function () use ($groupKey) {
                 $query = $this->chs->getModel()::select($groupKey, 'AGING', DB::raw('count(*) as total_aging'));
                 $this->chs->proceedFilter($query);

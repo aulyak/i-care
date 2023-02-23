@@ -82,8 +82,7 @@ class CommonHelperService
             array_push($res['ROW'], array($rd));
         }
         foreach ($colDistinct as $col) {
-            // if ($row == 'SPEED') dd($res, $colDistinct, $col);
-            $data = Cache::remember($this->model . '_' . (is_array($column) ? $column[0]['title'] : $column) . '_TABLE_' . (is_array($col) ? $col['title'] : $col) . 'DATA_' . $this->hasQuery(), $this->cacheTime, function () use ($column, $col, $row) {
+            $data = Cache::remember($this->model . '_' . (is_array($column) ? $column[0]['title'] : $column) . '_TABLE_' . (is_array($col) ? $col['title'] : $col) . 'DATA_' . $this->hasQuery(), now()->addMinutes($this->cacheTime), function () use ($column, $col, $row) {
                 $query = $this->model::select($row, DB::raw('count(*) as tbl_ct'));
                 if (is_array($col)) {
                     $query->whereRaw($col['whereRaw']);
@@ -102,25 +101,29 @@ class CommonHelperService
                 }
             }
         }
-        // if ($row == 'SPEED') dd($res, $colDistinct, $col, $data);
+        // dd($column, $row, $res);
         return $res;
     }
 
-    public function buildChartData($column, $asPercentage = false, $stack = null)
+    public function buildChartData($column, $asPercentage = false)
     {
         $res = array();
-        $res['LABEL'] = $this->getDistinct($column, true);
+        $res['LABEL'] = array();
         $res['DATA'] = array();
         $totalData = 0;
-        foreach ($res['LABEL'] as $label) {
-            $data = Cache::remember($this->model . '_CHART_' . $label . 'COUNT_' . $this->hasQuery(), $this->cacheTime, function () use ($column, $label) {
-                $query = $this->model::select(DB::raw('count(*) as dt'));
-                $query->where($column, $label);
+        $res_query = Cache::remember(
+            $this->model . '_CHART_' . $column . 'COUNT_' . $this->hasQuery(),
+            now()->addMinutes($this->cacheTime),
+            function () use ($column) {
+                $query = $this->model::select($column, DB::raw('count(*) as dt'));
                 $this->proceedFilter($query);
-                return $query->pluck('dt')[0];
-            });
-            $totalData += $data;
-            array_push($res['DATA'], $data);
+                return  $query->groupBy($column)->get()->toArray();
+            }
+        );
+        foreach ($res_query as $rq) {
+            array_push($res['LABEL'], $rq[$column]);
+            array_push($res['DATA'], $rq['dt']);
+            $totalData += $rq['dt'];
         }
         if ($asPercentage) {
             foreach ($res['DATA'] as $data) {
@@ -133,26 +136,37 @@ class CommonHelperService
         }
         return $res;
     }
+    function array_group_by($arr, $fldName)
+    {
+        $groups = array();
+        foreach ($arr as $rec) {
+            $groups[$rec[$fldName]][] = $rec;
+        }
+        return $groups;
+    }
     public function buildStackChartData($column, $stacked)
     {
         $res = array();
-        $res['LABEL'] = $this->getDistinct($column, true);
+        $res['LABEL'] = array();
         $res['DATA'] = array();
-        $data = Cache::remember($this->model . '_CHART_' . $column . $stacked . 'COUNT_' . $this->hasQuery(), $this->cacheTime, function () use ($column, $stacked) {
+        $data = Cache::remember($this->model . '_CHART_' . $column . $stacked . 'COUNT_' . $this->hasQuery(), now()->addMinutes($this->cacheTime), function () use ($column, $stacked) {
             $query = $this->model::select($column, $stacked, DB::raw('count(*) as dt'));
             $this->proceedFilter($query);
             return $query->groupBy($column)->groupBy($stacked)->get()->toArray();
         });
-        foreach ($res['LABEL'] as $stack) {
+        $dataGrp = $this->array_group_by($data, $stacked);
+        foreach ($dataGrp as $stacklabel => $stack) {
             $dtstd = array();
-            foreach ($data as $std) {
-                if ($std[$column] == $stack) array_push($dtstd, $std['dt']);
+            foreach ($stack as $std) {
+                array_push($dtstd, $std['dt']);
+                if (count($res['LABEL']) <= count($stack)) array_push($res['LABEL'], $std[$column]);
             }
             array_push($res['DATA'], [
-                'label' => $stack,
+                'label' => $stacklabel,
                 'data' => $dtstd
             ]);
         }
+        // dd($dataGrp, $res, $data);
         return $res;
     }
 
