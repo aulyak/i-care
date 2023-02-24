@@ -14,17 +14,17 @@ $(document).ready(function() {
   console.log({filteredData});
 
   const data = Object.values(filteredData).map(item => ({
-    notel: item.notel,
-    witel: item.witel,
-    sto: item.sto,
-    tgl_ps: item.tgl_ps,
-    age: item.age,
-    atribut: item.atribut,
-    alert: item.alert,
-    score: item.score,
-    bulan_alert: item.bulan_alert,
-    status: item.status,
-    deskripsi: item.deskripsi,
+    NOTEL: item.NOTEL,
+    WITEL: item.WITEL,
+    STO: item.STO,
+    TGL_PS: item.TGL_PS,
+    AGE: item.AGE,
+    ATRIBUT: item.ATRIBUT,
+    ALERT: item.ALERT,
+    SCORE: item.SCORE,
+    BULAN_ALERT: item.BULAN_ALERT,
+    STATUS: item.STATUS,
+    DESKRIPSI: item.DESKRIPSI,
     action: ''
   }));
 
@@ -44,17 +44,17 @@ $(document).ready(function() {
     responsive: true,
     data,
     columns: [
-      {data: 'notel'},
-      {data: 'witel'},
-      {data: 'sto'},
-      {data: 'tgl_ps'},
-      {data: 'age'},
-      {data: 'atribut'},
-      {data: 'alert'},
-      {data: 'score'},
-      {data: 'bulan_alert'},
-      {data: 'status'},
-      {data: 'deskripsi'},
+      {data: 'NOTEL'},
+      {data: 'WITEL'},
+      {data: 'STO'},
+      {data: 'TGL_PS'},
+      {data: 'AGE'},
+      {data: 'ATRIBUT'},
+      {data: 'ALERT'},
+      {data: 'SCORE'},
+      {data: 'BULAN_ALERT'},
+      {data: 'STATUS'},
+      {data: 'DESKRIPSI'},
       {
         data: 'action', render: (data, type, row) => `<button type="button" class="form-control btn"><i class="nav-icon fas fa-edit"
       data-toggle="modal" data-target="#modal-lg"></i></button>`}

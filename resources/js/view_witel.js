@@ -2,13 +2,13 @@ const dt = luxon.DateTime;
 
 function groupScores(arr) {
   const result = [...arr.reduce((r, o) => {
-    const key = `${o.alert}-${o.witel}-${o.atribut}`;
+    const key = `${o.ALERT}-${o.WITEL}-${o.ATRIBUT}`;
 
     const item = r.get(key) || Object.assign({}, o, {
       totalScore: 0,
     });
 
-    item.totalScore += o.score;
+    item.totalScore += o.SCORE;
 
     return r.set(key, item);
   }, new Map()).values()];
@@ -18,7 +18,7 @@ function groupScores(arr) {
 
 function pivot(arr, witelList) {
   const result = [...arr.reduce((r, o) => {
-    const key = `${o.alert}-${o.atribut}`;
+    const key = `${o.ALERT}-${o.ATRIBUT}`;
 
     const item = r.get(key) || Object.assign({}, o, witelList.reduce((acc, curr) => (acc[curr] = 0, acc), {}));
 
@@ -58,12 +58,12 @@ $(document).ready(function() {
   }));
 
   const data = groupedData.map((item) => {
-    const excludingWitels = witelList.filter(row => row !== item.witel);
+    const excludingWitels = witelList.filter(row => row !== item.WITEL);
     const tes = excludingWitels.reduce((acc, curr) => (acc[curr] = 0, acc), {});
     return {
-      alert: item.alert,
-      atribut: item.atribut,
-      [item.witel]: item.totalScore,
+      ALERT: item.ALERT,
+      ATRIBUT: item.ATRIBUT,
+      [item.WITEL]: item.totalScore,
       ...tes
     };
   });
@@ -72,8 +72,8 @@ $(document).ready(function() {
   console.log({data, pivotData});
 
   const columns = [
-    {data: 'alert'},
-    {data: 'atribut'},
+    {data: 'ALERT'},
+    {data: 'ATRIBUT'},
     ...witelArrHeader
   ];
 
@@ -91,10 +91,10 @@ $(document).ready(function() {
     buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"],
     createdRow: function(row, data, dataIndex, cells) {
       console.log({row, data, dataIndex, cells});
-      if (data.alert === 'BASIC ALERT' || data.alert === 'LEVERAGING') $(row).css({'background-color': '#69AC65'});
-      if (data.alert === 'HIGH ALERT') $(row).css({'background-color': '#F4D165'});
-      if (data.alert === 'VERY HIGH ALERT') $(row).css({'background-color': '#BE2A3E', 'color': 'white'});
-      if (data.alert === 'CHURN RETENTION') $(row).css({'background-color': '#DB5346', 'color': 'white'});
+      if (data.ALERT === 'BASIC ALERT' || data.ALERT === 'LEVERAGING') $(row).css({'background-color': '#69AC65'});
+      if (data.ALERT === 'HIGH ALERT') $(row).css({'background-color': '#F4D165'});
+      if (data.ALERT === 'VERY HIGH ALERT') $(row).css({'background-color': '#BE2A3E', 'color': 'white'});
+      if (data.ALERT === 'CHURN RETENTION') $(row).css({'background-color': '#DB5346', 'color': 'white'});
 
       $(cells).each(function(idx, cell) {
         if ([0, 1].includes(idx)) $(cell).css({'background-color': 'white', 'color': 'black'});

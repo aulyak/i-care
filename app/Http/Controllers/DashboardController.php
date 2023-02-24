@@ -15,7 +15,7 @@ class DashboardController extends Controller
 {
   //
   private $QUERY_LIMIT = 10000;
-  private $LIMMIT_ACTIVE = true;
+  private $LIMIT_ACTIVE = false;
 
   /**
    * Show the application dashboard.
@@ -64,7 +64,7 @@ class DashboardController extends Controller
     $filteredDataAlertVh = null;
     $filteredAlert = null;
 
-    $distinctWitel = Witel::select('WITEL')->groupBy('WITEL')->cursor()->pluck('WITEL');
+    $distinctWitel = Witel::select('WITEL')->groupBy('WITEL')->get()->pluck('WITEL');
 
     if ($request->all()) {
       $witel = $request->witel;
@@ -111,7 +111,7 @@ class DashboardController extends Controller
     }
 
     // limit testing
-    if ($this->LIMMIT_ACTIVE) {
+    if ($this->LIMIT_ACTIVE) {
       $filteredSummary = $filteredSummary->limit($this->QUERY_LIMIT);
       $filteredProfileLoss = $filteredProfileLoss->limit($this->QUERY_LIMIT);
       $filteredAlert = $filteredAlert->limit($this->QUERY_LIMIT);
@@ -122,12 +122,12 @@ class DashboardController extends Controller
     $totalLis = $filteredSummary->sum('TOTAL_LIS');
     $totalLoss = $filteredProfileLoss->sum('JUMLAH');
 
-    $filteredSummary = $filteredSummary->cursor();
-    $filteredProfileLoss = $filteredProfileLoss->cursor();
+    $filteredSummary = $filteredSummary->get();
+    $filteredProfileLoss = $filteredProfileLoss->get();
 
 
     // slowing query alert
-    $filteredDataAlertVh = $filteredAlert->cursor();
+    $filteredDataAlertVh = $filteredAlert->get();
     $totalVha = $filteredAlert->count();
 
     return view(
