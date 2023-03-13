@@ -57,27 +57,54 @@
                         </div> -->
           <!-- /.card-header -->
           <div class="card-body">
-            <table id="example1" class="table table-bordered table-striped">
+            <table id="qos_table" class="table table-bordered table-striped">
               <thead>
                 <tr>
                   <th rowspan="2">Bulan Sales</th>
-                  <th colspan="2">0-6 Bulan</th>
-                  <th>98%</th>
-                  <th colspan="2">7-12 Bulan</th>
-                  <th>96%</th>
-                  <th colspan="2">13-18 Bulan</th>
-                  <th>95%</th>
+                  <th colspan="6">0-6 Bulan</th>
+                  <th><?php
+                      $sum = 0;
+                      foreach ($result as $res) {
+                        if (count($res['AGING_AVERAGE']) > 6) {
+                          $sum += $res['AGING_AVERAGE'][6];
+                        } else {
+                          // dd($res);
+                          $sum += $res['AGING_AVERAGE'][count($res['AGING_AVERAGE']) - 1];
+                        }
+                      }
+                      echo round($sum / count($result), 2) * 100 . "%"
+                      ?></th>
+                  <th colspan="5">7-12 Bulan</th>
+                  <th><?php
+                      $sum = 0;
+                      foreach ($result as $res) {
+                        if (count($res['AGING_AVERAGE']) > 12) {
+                          $sum += $res['AGING_AVERAGE'][12];
+                        } else {
+                          // dd($res);
+                          $sum += $res['AGING_AVERAGE'][count($res['AGING_AVERAGE']) - 1];
+                        }
+                      }
+                      echo round($sum / count($result), 2) * 100 . "%"
+                      ?></th>
+                  <th colspan="5">13-18 Bulan</th>
+                  <th><?php
+                      $sum = 0;
+                      foreach ($result as $res) {
+                        if (count($res['AGING_AVERAGE']) > 18) {
+                          $sum += $res['AGING_AVERAGE'][18];
+                        } else {
+                          // dd($res);
+                          $sum += $res['AGING_AVERAGE'][count($res['AGING_AVERAGE']) - 1];
+                        }
+                      }
+                      echo round($sum / count($result), 2) * 100 . "%"
+                      ?></th>
                 </tr>
                 <tr>
-                  <th>0</th>
-                  <th>1</th>
-                  <th>6</th>
-                  <th>7</th>
-                  <th>8</th>
-                  <th>12</th>
-                  <th>13</th>
-                  <th>14</th>
-                  <th>18</th>
+                  @foreach ($agingQuery as $aq)
+                  <th>{{$aq}}</th>
+                  @endforeach
                 </tr>
               </thead>
               <tbody>
@@ -85,7 +112,7 @@
                 <tr>
                   <td>{{ ($res['GROUP'] ?? '-') }}</td>
                   @foreach ($agingQuery as $aq)
-                  @if ($aq < count($res['AGING_PERCENTAGE'])) <td style="background-color: green;">{{ (round($res['AGING_PERCENTAGE'][$aq],2)*100 . '%' ?? '') }}</td>
+                  @if ($aq < count($res['AGING_PERCENTAGE'])) <td style="background-color: <?= ($res['AGING_PERCENTAGE'][$aq] < 0.92 ? ($res['AGING_PERCENTAGE'][$aq] < 0.77 ? ($res['AGING_PERCENTAGE'][$aq] < 0.61 ? 'red' : 'orange') : 'yellow') : 'green') ?>;">{{ (round($res['AGING_PERCENTAGE'][$aq],2)*100 . '%' ?? '') }}</td>
                     @else
                     <td style="background-color: grey;"></td>
                     @endif
@@ -119,5 +146,13 @@
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.13.1/b-2.3.3/b-colvis-2.3.3/b-html5-2.3.3/b-print-2.3.3/r-2.4.0/sc-2.0.7/datatables.min.js">
 </script>
 <script src="js/app.js"></script>
-<script src="js/qos_sales.js"></script>
+<script>
+  $("#qos_table").DataTable({
+    "responsive": false,
+    "scrollX": true,
+    "lengthChange": false,
+    "autoWidth": false,
+    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+  }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+</script>
 @stop
