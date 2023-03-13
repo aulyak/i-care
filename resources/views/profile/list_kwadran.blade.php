@@ -82,88 +82,14 @@
                 </tr>
               </thead>
               <tbody>
+                @foreach ($data['TABLE']['KUADRAN_PER_WITEL']['ROW'] as $rows )
                 <tr>
-                  <td>BANTEN</td>
-                  <td>135,072</td>
-                  <td>12,658</td>
-                  <td style="color: #eed37c;">9.37%</td>
-                  <td>13,032</td>
-                  <td style="color: #5e8f69;">9.65%</td>
-                  <td>12,855</td>
-                  <td style="background-color: #e3906d;">9.52%</td>
-                  <td>8,433</td>
-                  <td style="color: #5e8f69;">6.24%</td>
-                  <td>473</td>
-                  <td style="color: #eed37c;">0.35%</td>
-                  <td>113,311</td>
-                  <td style="color: #5e8f69;">83.89%</td>
+                  @foreach ($rows as $row)
+                  <td>{{$row}}</td>
+                  @endforeach
                 </tr>
-                <tr>
-                  <td>BEKASI</td>
-                  <td>135,072</td>
-                  <td>12,658</td>
-                  <td style="color: #eed37c;">9.37%</td>
-                  <td>13,032</td>
-                  <td style="color: #5e8f69;">9.65%</td>
-                  <td>12,855</td>
-                  <td style="background-color: #e3906d;">9.52%</td>
-                  <td>8,433</td>
-                  <td style="color: #5e8f69;">6.24%</td>
-                  <td>473</td>
-                  <td style="color: #eed37c;">0.35%</td>
-                  <td>113,311</td>
-                  <td style="color: #5e8f69;">83.89%</td>
-                </tr>
-                <tr>
-                  <td>BOGOR</td>
-                  <td>135,072</td>
-                  <td>12,658</td>
-                  <td style="color: #eed37c;">9.37%</td>
-                  <td>13,032</td>
-                  <td style="color: #5e8f69;">9.65%</td>
-                  <td>12,855</td>
-                  <td style="background-color: #e3906d;">9.52%</td>
-                  <td>8,433</td>
-                  <td style="color: #5e8f69;">6.24%</td>
-                  <td>473</td>
-                  <td style="color: #eed37c;">0.35%</td>
-                  <td>113,311</td>
-                  <td style="color: #5e8f69;">83.89%</td>
-                </tr>
-                <tr>
-                  <td>JAKBAR</td>
-                  <td>135,072</td>
-                  <td>12,658</td>
-                  <td style="color: #eed37c;">9.37%</td>
-                  <td>13,032</td>
-                  <td style="color: #5e8f69;">9.65%</td>
-                  <td>12,855</td>
-                  <td style="background-color: #e3906d;">9.52%</td>
-                  <td>8,433</td>
-                  <td style="color: #5e8f69;">6.24%</td>
-                  <td>473</td>
-                  <td style="color: #eed37c;">0.35%</td>
-                  <td>113,311</td>
-                  <td style="color: #5e8f69;">83.89%</td>
-                </tr>
-                <tr>
-                  <td>JAKPUS</td>
-                  <td>135,072</td>
-                  <td>12,658</td>
-                  <td style="color: #eed37c;">9.37%</td>
-                  <td>13,032</td>
-                  <td style="color: #5e8f69;">9.65%</td>
-                  <td>12,855</td>
-                  <td style="background-color: #e3906d;">9.52%</td>
-                  <td>8,433</td>
-                  <td style="color: #5e8f69;">6.24%</td>
-                  <td>473</td>
-                  <td style="color: #eed37c;">0.35%</td>
-                  <td>113,311</td>
-                  <td style="color: #5e8f69;">83.89%</td>
-                </tr>
-              </tbody>
-              <!-- <tfoot>
+                @endforeach
+                <!-- <tfoot>
                     <tr>
                       <th>Rendering engine</th>
                       <th>Browser</th>

@@ -286,7 +286,11 @@ class ProfileHelperService
     }
     return $data;
   }
-
+  private function validNumeric($num, $default = 0)
+  {
+    if (is_numeric($num)) return $num;
+    return $default;
+  }
   private function tableBuilder($key)
   {
     $tbl['TITLE'] = $this->keyToTitle($key);
@@ -316,6 +320,44 @@ class ProfileHelperService
       $mtable = $this->chs->buildTableData('KET_CT0', 'WITEL');
       $tbl['HEAD'] = $mtable['HEAD'];
       $tbl['ROW'] = $mtable['ROW'];
+    } elseif ($key == 'KUADRAN_PER_WITEL') {
+      $perwitel = $this->chs->buildTableData('IS_CT0', 'WITEL');
+      $perkwadwan = $this->chs->buildTableData('KWADRAN_INDIHOME', 'WITEL');
+      $tbl['HEAD'] = ['WITEL', 'LIST', 'CT0', '%CT0', 'HOMEWIFI', '%HOMEWIFI', 'KW1', '%KW1', 'KW2', '%KW2', 'KW3', '%KW3', 'KW4', '%KW4'];
+      $tbl['ROW'] = [];
+      for ($i = 0; $i < count($perwitel['ROW']); $i++) {
+        $sumwitel = 0;
+        foreach ($perkwadwan['ROW'][$i] as $wd) {
+          $sumwitel += $this->validNumeric($wd);
+        }
+        // dd($perwitel);
+        $row = [
+          $perwitel['ROW'][$i][0],
+          $this->chs->transformNumber($sumwitel),
+          $this->chs->transformNumber($this->validNumeric($perwitel['ROW'][$i][1])), // CT0
+          round($this->validNumeric($perwitel['ROW'][$i][1]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %CT0
+          $this->chs->transformNumber($this->validNumeric($perwitel['ROW'][$i][2])), // HOMEWIFI
+          round($this->validNumeric($perwitel['ROW'][$i][2]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %HOMEWIFI
+          $this->chs->transformNumber($this->validNumeric($perkwadwan['ROW'][$i][1])), // KW1
+          round($this->validNumeric($perkwadwan['ROW'][$i][1]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %KW1
+          $this->chs->transformNumber(
+            $this->validNumeric($perkwadwan['ROW'][$i][4])
+          ), // KW2
+          round($this->validNumeric($perkwadwan['ROW'][$i][4]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %KW2
+          $this->chs->transformNumber(
+            $this->validNumeric($perkwadwan['ROW'][$i][3])
+          ), // KW3
+          round($this->validNumeric($perkwadwan['ROW'][$i][3]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %KW3
+          $this->chs->transformNumber(
+            $this->validNumeric($perkwadwan['ROW'][$i][2])
+          ), // KW4
+          round($this->validNumeric($perkwadwan['ROW'][$i][2]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %KW4
+        ];
+        array_push($tbl['ROW'], $row);
+      }
+      // debugbar()->info($tbl);
+      // debugbar()->info($perwitel);
+      // debugbar()->info($perkwadwan);
     }
     return $tbl;
   }
@@ -335,5 +377,15 @@ class ProfileHelperService
       $data[$option] = $this->tableBuilder($option);
     }
     return $data;
+  }
+
+  public function buildMultipleTable($refcol, $cols)
+  {
+    $mtable = [];
+    foreach ($cols as $col) {
+      array_push($mtable, $this->chs->buildTableData($refcol, $col));
+    }
+    // dd($mtable);
+    return $mtable;
   }
 }
