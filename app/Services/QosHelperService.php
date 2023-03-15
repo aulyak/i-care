@@ -20,7 +20,7 @@ class QosHelperService
 
     public function getAgingQuery()
     {
-        return [0, 1, 6, 7, 8, 12, 13, 14, 18];
+        return range(0, 18);
     }
 
     private function isValidGroupData($groupData, $groupKey)
@@ -52,7 +52,7 @@ class QosHelperService
         $groups = $this->chs->getDistinct($groupKey);
         $queryresult = Cache::remember(
             'QHS_AGING_COUNT_' . $groupKey . $this->chs->hasQuery(),
-            now()->addMinutes(120),
+            now()->addMinutes($this->chs->cacheTime),
             function () use ($groupKey) {
                 $query = $this->chs->getModel()::select($groupKey, 'AGING', DB::raw('count(*) as total_aging'));
                 $this->chs->proceedFilter($query);
@@ -71,6 +71,18 @@ class QosHelperService
                 for ($y = 1; $y <= count($rawdata['AGING_COUNT']); $y++) {
                     $agingPercentage = ($rawdata['AGING_COUNT'][$y - 1] / $rawdata['AGING_COUNT'][0]);
                     array_push($rawdata['AGING_PERCENTAGE'], $agingPercentage);
+                }
+                $rawdata['AGING_AVERAGE'] = array();
+                for ($y = 0; $y < count($rawdata['AGING_PERCENTAGE']); $y++) {
+                    $agingAverage = $rawdata['AGING_PERCENTAGE'][$y];
+                    if ($y > 0) {
+                        $tempSum = 0;
+                        for ($z = 0; $z < $y; $z++) {
+                            $tempSum += $rawdata['AGING_PERCENTAGE'][$z];
+                        }
+                        $agingAverage = $tempSum / ($y + 1);
+                    }
+                    array_push($rawdata['AGING_AVERAGE'], $agingAverage);
                 }
                 array_push($result, $rawdata);
             }

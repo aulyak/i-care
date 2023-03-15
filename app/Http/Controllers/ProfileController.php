@@ -58,9 +58,7 @@ class ProfileController extends Controller
     $this->PHS = new ProfileHelperService('ProfileListKwadran', NULL, $request);
     $data = [
       'OPTIONS' => $this->PHS->buildOption(['WITEL']),
-      'TABLE' => $this->PHS->buildTable([
-        'PROFILE_KUARAN_COSTUMER',
-      ]),
+      'TABLE' => $this->PHS->buildTable(['KUADRAN_PER_WITEL']),
     ];
     return view('profile.list_kwadran', compact('data'));
   }

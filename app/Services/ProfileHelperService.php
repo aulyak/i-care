@@ -24,15 +24,6 @@ class ProfileHelperService
     return ucwords(str_replace('_', ' ', strtolower($key)));
   }
 
-  private function buildDummyData($count, $maxrand = 60000, $formatted = true)
-  {
-    $dummyData = array();
-    for ($i = 0; $i < $count; $i++) {
-      array_push($dummyData, $this->chs->transformNumber(null, $maxrand, $formatted));
-    }
-    return $dummyData;
-  }
-
   public function buildOption($options)
   {
     return $this->chs->buildOptions($options);
@@ -41,19 +32,41 @@ class ProfileHelperService
   public function buildOverview($options)
   {
     $data = null;
+    if ($this->model == "ProfileLeveraging") {
+      $overviewCol = 'PRODUCT2';
+    }
+    if ($this->model == "ProfileRetention") {
+      $overviewCol = 'KET_CT0';
+    }
+    $res = Cache::remember(
+      $this->model . '_PHS_OVERVIEW_' . 'COUNT_' . $this->chs->hasQuery(),
+      now()->addMinutes($this->chs->cacheTime),
+      function () use ($overviewCol) {
+        $query = $this->chs->model::select($overviewCol, DB::raw('count(*) as dt'))->groupBy($overviewCol);
+        $this->chs->proceedFilter($query);
+        return $query->get()->toArray();
+      }
+    );
+
     foreach ($options as $option) {
-      $res = Cache::remember($this->model . '_PHS_OVERVIEW_' . $option . 'COUNT_' . $this->chs->hasQuery(), $this->chs->cacheTime, function () use ($option) {
-        $query = $this->chs->model::select(DB::raw('count(*) as dt'));
+      $data[$option] = 0;
+      foreach ($res as $r) {
         if ($this->model == "ProfileLeveraging" & $option != 'ALL_DATA') {
-          $query->where('PRODUCT2', $option);
+          if ($option == $r[$overviewCol]) $data[$option] = $r['dt'];
+        }
+        if ($this->model == "ProfileLeveraging" & $option == 'ALL_DATA') {
+          $data['ALL_DATA'] += $r['dt'];
         }
         if ($this->model == "ProfileRetention" & $option != 'TOTAL_CT0') {
-          $query->where('KET_CT0', $option);
+          if ($option == $r[$overviewCol]) $data[$option] = $r['dt'];
         }
-        $this->chs->proceedFilter($query);
-        return $query->pluck('dt')[0];
-      });
-      $data[$option] = $this->chs->transformNumber($res);
+        if ($this->model == "ProfileRetention" & $option == 'TOTAL_CT0') {
+          $data['TOTAL_CT0'] += $r['dt'];
+        }
+      }
+    }
+    foreach ($data as &$dt) {
+      $dt = $this->chs->transformNumber($dt);
     }
     return $data;
   }
@@ -273,7 +286,11 @@ class ProfileHelperService
     }
     return $data;
   }
-
+  private function validNumeric($num, $default = 0)
+  {
+    if (is_numeric($num)) return $num;
+    return $default;
+  }
   private function tableBuilder($key)
   {
     $tbl['TITLE'] = $this->keyToTitle($key);
@@ -303,6 +320,44 @@ class ProfileHelperService
       $mtable = $this->chs->buildTableData('KET_CT0', 'WITEL');
       $tbl['HEAD'] = $mtable['HEAD'];
       $tbl['ROW'] = $mtable['ROW'];
+    } elseif ($key == 'KUADRAN_PER_WITEL') {
+      $perwitel = $this->chs->buildTableData('IS_CT0', 'WITEL');
+      $perkwadwan = $this->chs->buildTableData('KWADRAN_INDIHOME', 'WITEL');
+      $tbl['HEAD'] = ['WITEL', 'LIST', 'CT0', '%CT0', 'HOMEWIFI', '%HOMEWIFI', 'KW1', '%KW1', 'KW2', '%KW2', 'KW3', '%KW3', 'KW4', '%KW4'];
+      $tbl['ROW'] = [];
+      for ($i = 0; $i < count($perwitel['ROW']); $i++) {
+        $sumwitel = 0;
+        foreach ($perkwadwan['ROW'][$i] as $wd) {
+          $sumwitel += $this->validNumeric($wd);
+        }
+        // dd($perwitel);
+        $row = [
+          $perwitel['ROW'][$i][0],
+          $this->chs->transformNumber($sumwitel),
+          $this->chs->transformNumber($this->validNumeric($perwitel['ROW'][$i][1])), // CT0
+          round($this->validNumeric($perwitel['ROW'][$i][1]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %CT0
+          $this->chs->transformNumber($this->validNumeric($perwitel['ROW'][$i][2])), // HOMEWIFI
+          round($this->validNumeric($perwitel['ROW'][$i][2]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %HOMEWIFI
+          $this->chs->transformNumber($this->validNumeric($perkwadwan['ROW'][$i][1])), // KW1
+          round($this->validNumeric($perkwadwan['ROW'][$i][1]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %KW1
+          $this->chs->transformNumber(
+            $this->validNumeric($perkwadwan['ROW'][$i][4])
+          ), // KW2
+          round($this->validNumeric($perkwadwan['ROW'][$i][4]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %KW2
+          $this->chs->transformNumber(
+            $this->validNumeric($perkwadwan['ROW'][$i][3])
+          ), // KW3
+          round($this->validNumeric($perkwadwan['ROW'][$i][3]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %KW3
+          $this->chs->transformNumber(
+            $this->validNumeric($perkwadwan['ROW'][$i][2])
+          ), // KW4
+          round($this->validNumeric($perkwadwan['ROW'][$i][2]) / ($sumwitel == 0 ? 1 : $sumwitel), 2) * 100 . '%', // %KW4
+        ];
+        array_push($tbl['ROW'], $row);
+      }
+      // debugbar()->info($tbl);
+      // debugbar()->info($perwitel);
+      // debugbar()->info($perkwadwan);
     }
     return $tbl;
   }
@@ -322,5 +377,15 @@ class ProfileHelperService
       $data[$option] = $this->tableBuilder($option);
     }
     return $data;
+  }
+
+  public function buildMultipleTable($refcol, $cols)
+  {
+    $mtable = [];
+    foreach ($cols as $col) {
+      array_push($mtable, $this->chs->buildTableData($refcol, $col));
+    }
+    // dd($mtable);
+    return $mtable;
   }
 }
